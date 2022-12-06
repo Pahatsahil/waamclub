@@ -1,0 +1,140 @@
+///// Onboarding Screen
+If already login ?
+    Total earning
+    Rewards amt
+    User Photo
+    Offers
+    Search History
+    Refererals
+    User Name
+
+Not login
+    Mobile number
+    Password
+    ---> Same as Already login
+
+Forget Password
+    Mobile Number
+    OTP
+    Check OTP
+    New password and then save it
+
+Register
+    Name
+    Email
+    Mobile Number
+    WhatsApp Number
+    Address(Home and Current)
+    Nearest Hub
+    Password
+    Privacy Policy
+
+KYC
+    PAN Number
+    PAN Image
+    Bank Account Number
+    Bank IFSC
+    Bank A/c name
+    Aadhar number
+    DOB
+    User Photo
+    Signature Photo
+
+Home
+    Home Offers
+        Store/By company Offers(Image, Name, Type by Limited/simple offer, cashback value )
+        Limited Offers
+        ---> Date before expiry same as above
+        Product Offers same as above
+    Total earning
+    Rewards amt
+    User Photo
+    
+    Home Details
+        User Photo
+        Notifications
+
+    Home Categories
+        Categgories Name
+        Images
+
+Search
+    Search results
+    Search history
+
+Refer
+    Refereral link
+    Invite by social media APIs
+
+Profile
+    User Name
+    User Photo
+    Total Earning
+    Total Rewards
+    Logout
+
+Account Settings
+    Modify
+        Name
+        Email
+        Mobile
+        Old Password
+
+    New Password
+    Confirm New Password
+
+Payments
+    Card Payment API
+    UPI Payment API
+
+Payment History
+    tRANSACTION id
+    Amount(Debit / Credit)
+    Payment Date
+    Payment Tracking Status(Mony Delivered)
+
+Ratings
+    Reviews
+        User Name
+        User Photo
+        User Text for Review
+        Rating(out of 5)
+
+    New Review
+        Write review
+        Rating(out of 5)
+        on Submit
+            Add this review on Rating Page
+
+    Number of Reviews
+
+Help Center
+    Search for topics
+    Help topics
+    Help Details by topics
+
+Offer Page
+    Offer Name
+    Offer Details
+    Rewards(% or Ammount)
+    Rewards Rates Text
+    Offer terms Text
+    Rewards completion time(When will rewards given after an offer complete)
+    More Offers
+    Share this Offer
+
+Limited Offers
+    Same as Offer Page 
+    Date before expiry same as above
+
+Categories Page
+    Sort By
+    Filter (default comes from Home Categories click)
+    Offers(Offers by type)
+    Offers Name
+    Cashback
+    Cashback Terms
+
+
+
+

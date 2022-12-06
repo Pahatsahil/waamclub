@@ -14,9 +14,11 @@ import articles from '../constants/articles';
 import {argonTheme, blocks, fontFamily} from '../constants';
 import {SliderBox} from 'react-native-image-slider-box';
 import Theme from '../constants/Theme';
+import { useNavigation } from '@react-navigation/native';
 const {width, height} = Dimensions.get('window');
 
 const Home = () => {
+  const navigation = useNavigation()
   const images = [
     'https://images.unsplash.com/photo-1516559828984-fb3b99548b21?ixlib=rb-1.2.1&auto=format&fit=crop&w=2100&q=80',
     'https://images.unsplash.com/photo-1519368358672-25b03afee3bf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2004&q=80',
@@ -37,7 +39,7 @@ const Home = () => {
           <SliderBox
             images={images}
             onCurrentImagePressed={index =>
-              console.warn(`image ${index} pressed`)
+              navigation.navigate('OfferPage')
             }
             // currentImageEmitter={index =>
             //   console.log(`current pos is: ${index}`)

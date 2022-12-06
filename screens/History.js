@@ -157,7 +157,6 @@ const History = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* {transactions.map(item => { */}
       <Block>
         <Text
           style={{

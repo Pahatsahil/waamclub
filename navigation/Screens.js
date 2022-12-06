@@ -13,7 +13,7 @@ import {Block, Text, theme} from 'galio-framework';
 import Articles from '../screens/Search';
 // drawer
 import CustomDrawerContent from './Menu';
-import Elements from '../screens/Elements';
+import HotOffers from '../screens/HotOffers';
 // screens
 import Home from '../screens/Home';
 import Onboarding from '../screens/Onboarding';
@@ -41,7 +41,7 @@ import LimitedTimeDeals from '../screens/LimitedTimeDeals';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Search from '../screens/Search';
 import Product from '../screens/Product';
-// import HotOffers from '../screens/HotOffers';
+import Help from '../screens/Help';
 const {height, width} = Dimensions.get('screen');
 
 const Stack = createStackNavigator();
@@ -56,11 +56,11 @@ const ElementsStack = props => {
         headerShown: false,
       }}>
       <Stack.Screen
-        name="Elements"
-        component={Elements}
+        name="HotOffers"
+        component={HotOffers}
         options={{
           header: ({navigation, scene}) => (
-            <Header title="Elements" navigation={navigation} scene={scene} />
+            <Header title="HotOffers" navigation={navigation} scene={scene} />
           ),
           cardStyle: {backgroundColor: '#F8F9FE'},
         }}
@@ -275,6 +275,21 @@ const ProfileStack = props => {
           cardStyle: {backgroundColor: '#FFFFFF'},
         }}
       />
+      <Stack.Screen
+        name="Help"
+        component={Help}
+        options={{
+          header: ({navigation, scene}) => (
+            <Header
+              title="Help Center"
+              navigation={navigation}
+              scene={scene}
+              back
+            />
+          ),
+          cardStyle: {backgroundColor: '#FFFFFF'},
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -324,7 +339,7 @@ const HomeStack = ({navigation, route}) => {
         }}
       />
       <Tab.Screen
-        name="Elements"
+        name="HotOffers"
         component={ElementsStack}
         options={{
           headerShown: false,
@@ -463,7 +478,7 @@ const OnboardingStack = props => {
 //         }}
 //       />
 //       <Drawer.Screen
-//         name="Elements"
+//         name="HotOffers"
 //         component={ElementsStack}
 //         options={{
 //           headerShown: false,
@@ -509,14 +524,13 @@ const BottomTabs = ({navigation, route}) => {
         }}
       />
       <Tab.Screen
-        name="Elements"
-        component={Elements}
+        name="Search"
+        component={Search}
         options={{
-          // header: ({navigation, scene}) => (
-          //   <Header title="Hot Offers" navigation={navigation} scene={scene} />
-          // ),
-          // cardStyle: {backgroundColor: '#F8F9FE'},
-          headerShown: false
+          header: ({navigation, scene}) => (
+            <Header title="Search" navigation={navigation} scene={scene} />
+          ),
+          cardStyle: {backgroundColor: '#F8F9FE'},
         }}
       />
       <Tab.Screen
@@ -530,11 +544,11 @@ const BottomTabs = ({navigation, route}) => {
         }}
       />
       <Tab.Screen
-        name="Search"
-        component={Search}
+        name="Hot Offers"
+        component={HotOffers}
         options={{
           header: ({navigation, scene}) => (
-            <Header title="Search" navigation={navigation} scene={scene} />
+            <Header title="Hot Offers" navigation={navigation} scene={scene} />
           ),
           cardStyle: {backgroundColor: '#F8F9FE'},
         }}

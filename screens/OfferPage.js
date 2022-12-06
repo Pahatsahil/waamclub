@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Dimensions,
@@ -10,7 +10,7 @@ import {
   StatusBar,
 } from 'react-native';
 import {Block, Text, theme} from 'galio-framework';
-import {Button} from 'native-base';
+import {Button, Modal} from 'native-base';
 import {Icon} from '../components';
 import {Images, argonTheme, fontFamily} from '../constants';
 import {HeaderHeight} from '../constants/utils';
@@ -22,7 +22,101 @@ const thumbMeasure = (width - 48 - 32) / 3;
 
 const OfferPage = () => {
   const navigation = useNavigation();
+  const [offerTerms, setOfferTerms] = useState(false);
+  const [rewardTerms, setRewardTerms] = useState(false);
   const amount = 8;
+
+  const Rewards = () => {
+    return (
+      <Modal
+        isOpen={rewardTerms} top='1/4'
+        onClose={() => setRewardTerms(!rewardTerms)}
+        animationPreset="slide">
+        <Modal.CloseButton />
+        <Modal.Header w={'full'} >
+          <Text
+            size={18}
+            bold
+            color={argonTheme.COLORS.BLACK}
+            style={{fontFamily: fontFamily.MONTSERRATBOLD}}>
+            Rewards Terms and COnditions
+          </Text>
+        </Modal.Header>
+        <Modal.Body w={'full'} backgroundColor={argonTheme.COLORS.WHITE}>
+          <Text>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book.{'\n'}
+          </Text>
+          <Text>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book.{'\n'}
+          </Text>
+          <Text>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book.{'\n'}
+          </Text>
+          <Text>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book.{'\n'}
+          </Text>
+        </Modal.Body>
+      </Modal>
+    );
+  };
+  
+  const OfferTerms = () => {
+    return (
+      <Modal
+        isOpen={offerTerms} top='1/4'
+        onClose={() => setOfferTerms(!offerTerms)}
+        animationPreset="slide">
+        <Modal.CloseButton />
+        <Modal.Header w={'full'} >
+          <Text
+            size={18}
+            bold
+            color={argonTheme.COLORS.BLACK}
+            style={{fontFamily: fontFamily.MONTSERRATBOLD}}>
+            Offer Terms and Conditions
+          </Text>
+        </Modal.Header>
+        <Modal.Body w={'full'} backgroundColor={argonTheme.COLORS.WHITE}>
+          <Text>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book.{'\n'}
+          </Text>
+          <Text>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book.{'\n'}
+          </Text>
+          <Text>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book.{'\n'}
+          </Text>
+          <Text>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book.{'\n'}
+          </Text>
+        </Modal.Body>
+      </Modal>
+    );
+  };
 
   return (
     <Block flex style={styles.profile}>
@@ -124,6 +218,7 @@ const OfferPage = () => {
             <Button
               style={{marginBottom: 10}}
               background={argonTheme.COLORS.WARNING}
+              onPress={() => navigation.navigate('Hot Offers')}
               size={'xs'}
               px={'1'}>
               <Block row center>
@@ -143,6 +238,7 @@ const OfferPage = () => {
               justifyContent={'flex-start'}
               style={{marginBottom: 10}}
               background={argonTheme.COLORS.PRIMARY}
+              onPress={() => setRewardTerms(true)}
               size={'xs'}
               px={'6'}>
               <Block row center>
@@ -162,6 +258,7 @@ const OfferPage = () => {
               justifyContent={'flex-start'}
               style={{marginBottom: 10}}
               background={argonTheme.COLORS.BUTTON_PINK}
+              onPress={() => setOfferTerms(true)}
               size={'xs'}
               px={'6'}>
               <Block row center>
@@ -224,19 +321,21 @@ const OfferPage = () => {
                 color={argonTheme.COLORS.BUTTON_PINK}
                 style={{marginRight: 12}}
               />
-              <Block >
-              <Text color={argonTheme.COLORS.BLACK} size={15}>
-                Rewards in 
-              </Text>
-              <Text color={argonTheme.COLORS.BLACK} bold size={15}>
-                24 hours after{'\n'} Shipment
-              </Text>
-            </Block>
+              <Block>
+                <Text color={argonTheme.COLORS.BLACK} size={15}>
+                  Rewards in
+                </Text>
+                <Text color={argonTheme.COLORS.BLACK} bold size={15}>
+                  24 hours after{'\n'} Shipment
+                </Text>
+              </Block>
             </Block>
           </Block>
         </Block>
       </Block>
       {/* </ScrollView> */}
+      <OfferTerms />
+      <Rewards />
     </Block>
   );
 };

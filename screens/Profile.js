@@ -188,7 +188,7 @@ const Profile = () => {
                     </Text>
                   </Block>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => console.log('navigate to _ screen')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Help')}>
                   <Block row center card style={styles.screens}>
                     <Block row center style={{width: width * 0.75}}>
                       <Icon

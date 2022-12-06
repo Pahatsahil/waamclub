@@ -26,7 +26,7 @@ const thumbMeasure = (width - 48 - 32) / 3;
 const Product = () => {
   const navigation = useNavigation();
   const amount = 8;
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState('');
   const [isFocus, setIsFocus] = useState(false);
   const images = [
     'https://images.unsplash.com/photo-1516559828984-fb3b99548b21?ixlib=rb-1.2.1&auto=format&fit=crop&w=2100&q=80',
@@ -47,13 +47,13 @@ const Product = () => {
     {label: 'Item 7', value: '7'},
     {label: 'Item 8', value: '8'},
   ];
-  useEffect(() => {
-    navigation.getParent()?.setOptions({
-      tabBarStyle: {
-        display: 'none',
-      },
-    });
-  }, [navigation]);
+  // useEffect(() => {
+  //   navigation.getParent()?.setOptions({
+  //     tabBarStyle: {
+  //       display: 'none',
+  //     },
+  //   });
+  // }, [navigation]);
   const PriceData = [
     {
       index: 1,
@@ -230,7 +230,7 @@ const Product = () => {
               }}>
               Choose Best Price
             </Text>
-            {PriceData.map(item => {
+            {/* {PriceData.map(item => {
               return (
                 <Block
                   card
@@ -392,7 +392,7 @@ const Product = () => {
                   </Block>
                 </Block>
               );
-            })}
+            })} */}
           </Block>
           <Block
             flex

@@ -26,12 +26,12 @@ class TabItem extends React.Component {
             color={focused ? 'white' : argonTheme.COLORS.PRIMARY}
           />
         );
-      case 'Elements':
+      case 'Hot Offers':
         return (
           <Icon
-            name="inbox"
-            // family="ArgonExtra"
-            size={14}
+            name="fire"
+            family="MaterialCommunityIcons"
+            size={20}
             color={focused ? 'white' : argonTheme.COLORS.PRIMARY}
           />
         );
@@ -136,7 +136,7 @@ class TabItem extends React.Component {
             </View>
             <Block row center flex={1}>
               <Text
-                size={15}
+                size={14}
                 bold={focused ? true : false}
                 style={
                   {
