@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "871379218982",
+    "project_id": "waamclub-612fb",
+    "storage_bucket": "waamclub-612fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:871379218982:android:a92c529ef5e855cf39ece7",
+        "android_client_info": {
+          "package_name": "com.waamclub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "871379218982-0jb7kmotlitl5ucs2h2e804rfuhgv034.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.waamclub",
+            "certificate_hash": "a6a603e685ce855dd28c8714b653f13cdcc99fe9"
+          }
+        },
+        {
+          "client_id": "871379218982-l1nr4bcfod9fma4p7qvbnancbpt0965f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.waamclub",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "871379218982-08h3l91vlnod2a81vhrop00o4nklc1cl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyBqqypgGCUNGTBYfEcjTMkcuucV6yR20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "871379218982-08h3l91vlnod2a81vhrop00o4nklc1cl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

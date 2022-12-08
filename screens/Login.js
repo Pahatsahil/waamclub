@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   StyleSheet,
   ImageBackground,
   Dimensions,
   StatusBar,
   KeyboardAvoidingView,
+  Alert
 } from 'react-native';
 import {Block, Checkbox, Text, theme} from 'galio-framework';
 // import Icons as Icon from 'react-native-vector-icons/FontAwesome';
@@ -13,10 +14,96 @@ import {Images, argonTheme} from '../constants';
 import {useNavigation} from '@react-navigation/native';
 import {DrawerActions} from '@react-navigation/native';
 import Theme from '../constants/Theme';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import {
+  LoginManager,
+  GraphRequest,
+  GraphRequestManager,
+} from 'react-native-fbsdk';
+
 const {width, height} = Dimensions.get('screen');
 
 const Login = () => {
   const navigation = useNavigation();
+
+  useEffect(() => {
+    GoogleSignin.configure();
+  }, []);
+
+  const googleLogin = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log('User Info', userInfo);
+      Alert.alert('Google Logged in')
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('Error', error);
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('Error', error);
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('Error', error);
+        // play services not available or outdated
+      } else {
+        console.log('Error', error);
+        // some other error happened
+      }
+    }
+  };
+
+  const fbLogin = resCallback => {
+    LoginManager.logOut();
+    return LoginManager.logInWithPermissions(['email', 'public_profile']).then(
+      result => {
+        console.log('FB Result', result);
+        if (
+          result.declinedPermissions &&
+          result.declinedPermissions.includes('email')
+        ) {
+          resCallback({message: 'Email is required'});
+        }
+        if (result.isCancelled) {
+          console.log('Cancelled!!!!');
+        } else {
+          const infoRequest = new GraphRequest(
+            '/me?fields=email,name,picture,friends',
+            null,
+            resCallback,
+          );
+          new GraphRequestManager().addRequest(infoRequest).start();
+        }
+      },
+      function (error) {
+        console.log('Login failed with error ' + error);
+      },
+    );
+  };
+
+  const onfbLogin = async() => {
+    try {
+      await fbLogin(_responseInfoCallback)
+    } catch (error) {
+      console.log('Error raised', error) 
+    }
+  }
+
+  const _responseInfoCallback = async(error,result) => {
+    if(error){
+      console.log('Error Top', error)
+      return
+    }
+    else{
+      const userData = result
+      console.log('FB DATAAAA', userData)
+      Alert.alert('FB Logged  in');
+    }
+  } 
+
   return (
     <Block flex>
       <StatusBar hidden />
@@ -35,7 +122,8 @@ const Login = () => {
                 Login with
               </Text>
               <Block row style={{marginTop: theme.SIZES.BASE}}>
-                <Button style={{...styles.socialButtons, marginRight: 30}}>
+                <Button style={{...styles.socialButtons, marginRight: 30}}
+                onPress={() => onfbLogin()}>
                   <Block row>
                     <Icon
                       name="facebook"
@@ -46,7 +134,9 @@ const Login = () => {
                     <Text style={styles.socialTextButtons}>Facebook</Text>
                   </Block>
                 </Button>
-                <Button style={styles.socialButtons}>
+                <Button
+                  style={styles.socialButtons}
+                  onPress={() => googleLogin()}>
                   <Block row>
                     <Icon
                       name="google"
@@ -54,11 +144,7 @@ const Login = () => {
                       color={Theme.COLORS.ACTIVE}
                       style={{marginTop: 2, marginRight: 5}}
                     />
-                    <Text
-                      style={
-                        styles.socialTextButtons}>
-                      Google
-                    </Text>
+                    <Text style={styles.socialTextButtons}>Google</Text>
                   </Block>
                 </Button>
               </Block>
