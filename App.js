@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState} from 'react';
 import {Image} from 'react-native';
 // import AppLoading from "expo-app-loading";
@@ -14,6 +13,7 @@ import SplashScreen from 'react-native-splash-screen';
 
 import Screens from './navigation/Screens';
 import {Images, articles, argonTheme} from './constants';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 // cache app images
 const assetImages = [
@@ -75,9 +75,9 @@ const App = () => {
     <NavigationContainer>
       <GalioProvider theme={argonTheme}>
         <NativeBaseProvider>
-          <Block flex>
+          <SafeAreaProvider>
             <Screens />
-          </Block>
+          </SafeAreaProvider>
         </NativeBaseProvider>
       </GalioProvider>
     </NavigationContainer>

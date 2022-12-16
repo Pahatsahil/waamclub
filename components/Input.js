@@ -22,9 +22,9 @@ class ArInput extends React.Component {
     return (
       <Input
         placeholder="write something here"
-        placeholderTextColor={textColor != '' ? textColor : argonTheme.COLORS.MUTED}
+        placeholderTextColor={textColor != '' ? textColor : argonTheme.COLORS.BLACK}
         style={inputStyles}
-        color={color != '' ? color : argonTheme.COLORS.HEADER}
+        color={argonTheme.COLORS.BLACK}
         type={'default'}
         iconContent={
           <Icon

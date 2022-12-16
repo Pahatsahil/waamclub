@@ -111,6 +111,7 @@ const Register2 = () => {
                     <Button
                       style={{width: 100}}
                       color="transparent"
+                      borderWidth={0}
                       textStyle={{
                         color: argonTheme.COLORS.PRIMARY,
                         fontSize: 14,

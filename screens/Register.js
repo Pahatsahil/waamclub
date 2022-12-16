@@ -119,7 +119,7 @@ const Register = () => {
                         <Icon
                           size={16}
                           color={argonTheme.COLORS.ICON}
-                          name="whasapp"
+                          name="mobile-alt"
                           // family="ArgonExtra"
                           style={styles.inputIcons}
                         />

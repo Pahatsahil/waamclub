@@ -42,6 +42,7 @@ import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Search from '../screens/Search';
 import Product from '../screens/Product';
 import Help from '../screens/Help';
+import ForgetPassword from '../screens/ForgetPassword';
 const {height, width} = Dimensions.get('screen');
 
 const Stack = createStackNavigator();
@@ -86,6 +87,7 @@ const ElementsStack = props => {
 const RegisterStack = props => {
   return (
     <Stack.Navigator
+    initialRouteName='Onboarding'
       screenOptions={{
         mode: 'card',
         headerShown: 'screen',
@@ -93,6 +95,23 @@ const RegisterStack = props => {
       <Stack.Screen
         name="Login"
         component={Login}
+        options={{headerShown: false}}
+        // options={{
+        //   header: ({ navigation, scene }) => (
+        //     <Header title="Register" navigation={navigation} scene={scene} />
+        //   ),
+        //   cardStyle: { backgroundColor: "#F8F9FE" },
+        // }}
+      />
+      
+      <Stack.Screen
+        name="Onboarding"
+        component={Onboarding}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ForgetPassword"
+        component={ForgetPassword}
         options={{headerShown: false}}
         // options={{
         //   header: ({ navigation, scene }) => (
@@ -563,7 +582,7 @@ const BottomTabs = ({navigation, route}) => {
     </Tab.Navigator>
   );
 };
-export default OnboardingStack;
+export default RegisterStack;
 
 const styles = StyleSheet.create({
   profileContainer: {

@@ -2,18 +2,17 @@ import React, {useState} from 'react';
 import {
   StyleSheet,
   Dimensions,
-  Modal,
+  View,
   Image,
   Text,
-  View,
-  TouchableWithoutFeedback,
   TouchableOpacity,
   FlatList,
   ImageBackground,
 } from 'react-native';
 import {Block, theme, DeckSwiper} from 'galio-framework';
 import {argonTheme, blocks} from '../constants';
-import Theme from '../constants/Theme';
+import Share from 'react-native-share';
+
 const {width, height} = Dimensions.get('window');
 
 import {Images} from '../constants';
@@ -107,119 +106,17 @@ const Refer = () => {
     },
   ];
 
-  const Share = () => {
-    return (
-      <Modal
-        visible={modal}
-        onRequestClose={() => {
-          hideModal(false);
-        }}
-        transparent={true}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: argonTheme.COLORS.GREY2,
-          }}></View>
-        <View
-          style={{
-            justifyContent: 'flex-end',
-            marginHorizontal: 10,
-            marginBottom: 15,
-            borderColor: argonTheme.COLORS.WHITE,
-            borderWidth: 1,
-            borderRadius: 10,
-            height: 300,
-            backgroundColor: argonTheme.COLORS.WHITE,
-            elevation: 5,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              padding: 15,
-              paddingLeft: 100,
-              width: '100%',
-              alignItems: 'center',
-            }}>
-            <Text
-              style={{
-                textAlign: 'center',
-                fontSize: 14,
-                color: argonTheme.COLORS.BLACK,
-              }}>
-              Share Referral Code
-            </Text>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                hideModal(false);
-              }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  color: argonTheme.COLORS.BLACK,
-                  marginBottom: 4,
-                  alignSelf: 'flex-end',
-                }}>
-                X
-              </Text>
-            </TouchableWithoutFeedback>
-          </View>
-          {/* <View> */}
-          <FlatList
-            data={appsData}
-            // horizontal={true}
-            numColumns={4}
-            renderItem={({item}) => {
-              return (
-                <View
-                  style={{
-                    alignSelf: 'center',
-                    justifyContent: 'space-evenly',
-                    alignItems: 'flex-start',
-                    marginLeft: 8,
-                  }}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      console.log(item.name);
-                    }}
-                    style={{
-                      alignItems: 'center',
-                      paddingVertical: 20,
-                      paddingHorizontal: 10,
-                    }}>
-                    <Image
-                      source={item.image}
-                      resizeMode="contain"
-                      style={{
-                        width: 50,
-                        height: 50,
-                      }}
-                    />
-                    <Text style={{color: argonTheme.COLORS.BLACK2}}>
-                      {item.name}
-                    </Text>
-                  </TouchableOpacity>
-                  {/* <View style={{padding: 15, alignItems: 'center'}}>
-                      <Image
-                        source={item.image}
-                        style={{
-                          width: 40,
-                          height: 40,
-                          backgroundColor: argonTheme.COLORS.GREY2,
-                        }}
-                      />
-                      <Text style={{color: argonTheme.COLORS.BLACK2}}>{item.name}</Text>
-                    </View> */}
-                </View>
-              );
-            }}
-          />
-          {/* </View> */}
-        </View>
-      </Modal>
-    );
+  const onShare = () => {
+    const shareOptions = {
+      message: `Join Waamclub with this Link and earn cashback  https://waamclub/reiojweYY`,
+      // url: Images.Facebook
+    };
+    try {
+      const response = Share.open(shareOptions);
+      console.log(response);
+    } catch (error) {
+      console.log('Errror', error);
+    }
   };
   return (
     <ImageBackground
@@ -227,7 +124,6 @@ const Refer = () => {
       style={styles.profileContainer}
       imageStyle={styles.profileBackground}>
       <Block flex card center style={styles.container}>
-        <Share />
         <Image
           resizeMode="contain"
           source={Images.WhatsAppBig}
@@ -305,9 +201,7 @@ const Refer = () => {
                   }}>
                   <TouchableOpacity
                     onPress={() => {
-                      item.name == 'More'
-                        ? hideModal(!modal)
-                        : console.log(item.name);
+                      item.name == 'More' ? onShare() : console.log(item.name);
                     }}
                     style={{
                       alignItems: 'center',
