@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   StyleSheet,
   Dimensions,
@@ -12,103 +12,21 @@ import {
 import {Block, theme, DeckSwiper} from 'galio-framework';
 import {argonTheme, blocks} from '../constants';
 import Share from 'react-native-share';
+import {StoreContext} from '../redux/store/index';
 
 const {width, height} = Dimensions.get('window');
 
 import {Images} from '../constants';
 
 const Refer = () => {
-  const [modal, hideModal] = useState(false);
+  // const affiliateLink = 'https://waamclub/reiojweYY';
+  const customerLink = 'https://aviraspices.in/api/app/register?referral_id=';
+  const {state, actions} = useContext<any>(StoreContext);
+  const [agentID, setAgentID] = useState<any>(state.userID || []);
 
-  const appsData = [
-    {
-      index: 1,
-      name: 'WhatsApp',
-      image: Images.WhatsAppBig,
-    },
-    {
-      index: 2,
-      name: 'Messenger',
-      image: Images.Messenger,
-    },
-    {
-      index: 3,
-      name: 'Viber',
-      image: Images.ViberBig,
-    },
-    {
-      index: 4,
-      name: 'Twitter',
-      image: Images.Twitter,
-    },
-    {
-      index: 5,
-      name: 'Messages',
-      image: Images.Messages,
-    },
-    {
-      index: 6,
-      name: 'Instagram',
-      image: Images.Instagram,
-    },
-    {
-      index: 7,
-      name: 'Gmail',
-      image: Images.Gmail,
-    },
-    {
-      index: 8,
-      name: 'More',
-      image: Images.More,
-    },
-    {
-      index: 9,
-      name: 'Twitch',
-      image: Images.More,
-    },
-    {
-      index: 10,
-      name: 'SnapChat',
-      image: Images.More,
-    },
-    {
-      index: 10,
-      name: 'Telegram',
-      image: Images.More,
-    },
-    {
-      index: 11,
-      name: 'Bluetooth',
-      image: Images.More,
-    },
-    {
-      index: 12,
-      name: 'TikTok',
-      image: Images.More,
-    },
-  ];
-
-  const halfData = [
-    {
-      index: 1,
-      name: 'WhatsApp',
-      image: Images.WhatsAppBig,
-    },
-    {
-      index: 2,
-      name: 'Twitter',
-      image: Images.Twitter,
-    },
-    {
-      index: 3,
-      name: 'More',
-      image: Images.More,
-    },
-  ];
-
-  const onShare = () => {
+  const onShare = link => {
     const shareOptions = {
-      message: `Join Waamclub with this Link and earn cashback  https://waamclub/reiojweYY`,
+      message: `Join Waamclub with this Link and earn cashback  ${link}`,
       // url: Images.Facebook
     };
     try {
@@ -118,6 +36,12 @@ const Refer = () => {
       console.log('Errror', error);
     }
   };
+
+  useEffect(() => {
+    // data.map(item => console.log(item.agent_id));
+    console.log('object', agentID)
+  }, []);
+
   return (
     <ImageBackground
       source={Images.ProfileBackground}
@@ -148,19 +72,45 @@ const Refer = () => {
         </Text>
         <View
           style={{
-            backgroundColor: argonTheme.COLORS.WHITE,
-            borderWidth: 2,
-            borderColor: argonTheme.COLORS.ERROR,
-            borderStyle: 'dashed',
             flexDirection: 'row',
             justifyContent: 'space-between',
             paddingVertical: 10,
             marginBottom: 10,
-            paddingHorizontal: 10,
+            alignItems: 'center',
           }}>
-          <Text style={[styles.boldText, {color: argonTheme.COLORS.ERROR}]}>
-            https://waamclub/reiojweYY
-          </Text>
+          <Text style={{color: argonTheme.COLORS.BLACK,}}>Your Referral ID: </Text>
+          <View>
+            <Text style={[styles.boldText, {color: argonTheme.COLORS.ERROR, fontWeight: 'bold'}]}>
+              {agentID}
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingVertical: 10,
+            marginBottom: 10,
+            alignItems: 'center',
+          }}>
+          <Text style={{color: argonTheme.COLORS.BLACK, fontWeight: 'bold'}}>Link: </Text>
+
+          <TouchableOpacity
+            onPress={() => {
+              onShare(customerLink+agentID);
+            }}
+            style={{
+              backgroundColor: argonTheme.COLORS.WHITE,
+              borderWidth: 2,
+              borderColor: argonTheme.COLORS.ERROR,
+              borderStyle: 'dashed',
+              paddingHorizontal: 10,
+              width: width * 0.6
+            }}>
+            <Text style={[styles.boldText, {color: argonTheme.COLORS.ERROR}]}>
+              {customerLink+agentID}
+            </Text>
+          </TouchableOpacity>
         </View>
         <Text
           style={[
@@ -169,7 +119,7 @@ const Refer = () => {
           ]}>
           Tap to Copy
         </Text>
-        <Block
+        {/* <Block
           card
           style={{
             backgroundColor: argonTheme.COLORS.PRIMARY,
@@ -221,7 +171,7 @@ const Refer = () => {
                       {item.name}
                     </Text>
                   </TouchableOpacity>
-                  {/* <View style={{padding: 15, alignItems: 'center'}}>
+                   <View style={{padding: 15, alignItems: 'center'}}>
                       <Image
                         source={item.image}
                         style={{
@@ -231,12 +181,12 @@ const Refer = () => {
                         }}
                       />
                       <Text style={{color: argonTheme.COLORS.BLACK2}}>{item.name}</Text>
-                    </View> */}
+                    </View> 
                 </View>
               );
             }}
           />
-        </Block>
+        </Block> */}
       </Block>
     </ImageBackground>
   );

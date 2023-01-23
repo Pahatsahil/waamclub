@@ -14,6 +14,7 @@ import SplashScreen from 'react-native-splash-screen';
 import Screens from './navigation/Screens';
 import {Images, articles, argonTheme} from './constants';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {StoreProvider} from './redux/store/index';
 
 // cache app images
 const assetImages = [
@@ -76,7 +77,9 @@ const App = () => {
       <GalioProvider theme={argonTheme}>
         <NativeBaseProvider>
           <SafeAreaProvider>
-            <Screens />
+            <StoreProvider>
+              <Screens />
+            </StoreProvider>
           </SafeAreaProvider>
         </NativeBaseProvider>
       </GalioProvider>

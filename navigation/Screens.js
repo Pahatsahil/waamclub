@@ -43,6 +43,7 @@ import Search from '../screens/Search';
 import Product from '../screens/Product';
 import Help from '../screens/Help';
 import ForgetPassword from '../screens/ForgetPassword';
+import AffiliateCustomer from '../screens/AffiliateCustomer';
 const {height, width} = Dimensions.get('screen');
 
 const Stack = createStackNavigator();
@@ -220,13 +221,13 @@ const ArticlesStack = props => {
 const ProfileStack = props => {
   return (
     <Stack.Navigator
-      initialRouteName="Profile"
+      initialRouteName="Profiles"
       screenOptions={{
         mode: 'card',
         headerShown: 'screen',
       }}>
       <Stack.Screen
-        name="Profile"
+        name="Profiles"
         component={Profile}
         options={{
           header: ({navigation, scene}) => (
@@ -563,13 +564,14 @@ const BottomTabs = ({navigation, route}) => {
         }}
       />
       <Tab.Screen
-        name="Hot Offers"
-        component={HotOffers}
+        name="ACS"
+        component={AffiliateCustomer}
         options={{
-          header: ({navigation, scene}) => (
-            <Header title="Hot Offers" navigation={navigation} scene={scene} />
-          ),
+          // header: ({navigation, scene}) => (
+          //   <Header title="Hot Offers" navigation={navigation} scene={scene} />
+          // ),
           cardStyle: {backgroundColor: '#F8F9FE'},
+          headerShown: false
         }}
       />
       <Tab.Screen

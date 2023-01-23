@@ -22,8 +22,8 @@ import ActionSheet from 'react-native-actionsheet';
 
 const {width, height} = Dimensions.get('screen');
 
-const KYC = () => {
-  const navigation = useNavigation();
+const KYC = ({navigation, route}) => {
+  const {profile} = route.params;
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [imageAdded, setImageAdded] = useState(false);
   const [modal, setModal] = useState(false);
@@ -31,10 +31,9 @@ const KYC = () => {
   let actionSheet = useRef();
   const BUTTONS = ['Take Photo', 'Choose Photo from Library', 'Cancel'];
 
-  // useEffect(() => {
-  //   RequestCameraPermission();
-  //   console.log('Callback');
-  // }, []);
+  useEffect(() => {
+    console.log('Callback', profile);
+  }, []);
 
   const PhotofromLibrary = () => {
     ImagePicker.openPicker({
@@ -100,7 +99,7 @@ const KYC = () => {
               </Block>
               <Block flex center>
                 <ScrollView
-                  style={{flex: 1,width: width * 0.75}}
+                  style={{flex: 1, width: width * 0.75}}
                   showsVerticalScrollIndicator={false}>
                   <Block>
                     <Input
@@ -215,9 +214,13 @@ const KYC = () => {
                     <Button
                       color="primary"
                       style={styles.createButton}
-                      onPress={() => navigation.navigate('KYC2')}>
+                      onPress={() => {
+                        profile
+                          ? navigation.navigate('Profile')
+                          : navigation.navigate('KYC2');
+                      }}>
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                        Next
+                        {profile ? 'Submit' : 'Next'}
                       </Text>
                     </Button>
                   </Block>

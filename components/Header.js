@@ -103,7 +103,7 @@ class Header extends React.Component {
             isWhite={white}
           />,
           <UserPhoto
-            key="basket-home"
+            key="user-photo"
             navigation={navigation}
             isWhite={white}
           />,

@@ -115,6 +115,30 @@ const Profile = () => {
                     </Text>
                   </Block>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('KYC', {profile: true})}>
+                  <Block row center card style={styles.screens}>
+                    <Block row center style={{width: width * 0.75}}>
+                      <Icon
+                        name="piggy-bank"
+                        // family={'MaterialCommunityIcons'}
+                        size={14}
+                        style={styles.screensIcon}
+                      />
+                      <Text
+                        color="black"
+                        style={{fontFamily: fontFamily.WHITNEYREGULAR}}
+                        size={15}>
+                        Bank Details
+                      </Text>
+                    </Block>
+                    <Text
+                      color="black"
+                      size={15}
+                      style={{fontFamily: fontFamily.WHITNEYREGULAR}}>
+                      {'>'}
+                    </Text>
+                  </Block>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate("Payments")}>
                   <Block row center card style={styles.screens}>
                     <Block row center style={{width: width * 0.75}}>

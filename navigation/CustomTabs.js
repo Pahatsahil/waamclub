@@ -14,7 +14,7 @@ const CustomTabContent = ({
   state,
   ...rest
 }) => {
-  const screens = ['Home', 'Search', 'Refer', 'Hot Offers', 'Profile'];
+  const screens = ['Home', 'Search', 'Refer', 'ACS', 'Profile'];
   return (
     <Block
       style={styles.container}

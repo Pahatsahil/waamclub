@@ -17,10 +17,10 @@ class IconExtra extends React.Component {
     fontLoaded: false,
   }
 
-  async componentDidMount() {
-    await Font.loadAsync({ ArgonExtra: ArgonExtra });
-    this.setState({ fontLoaded: true });
-  }
+  // async componentDidMount() {
+  //   await Font.loadAsync({ ArgonExtra: ArgonExtra });
+  //   this.setState({ fontLoaded: true });
+  // }
 
   render() {
     const { name, family, ...rest } = this.props;
