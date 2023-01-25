@@ -38,7 +38,7 @@
     "react-native-fbsdk": "^3.0.0",
     "react-native-gesture-handler": "~2.2.1",
     "react-native-image-crop-picker": "^0.38.1",
-    "react-native-image-picker": "^4.10.1",
+    "react-native-image-picker": "^4.10.3",
     "react-native-image-slider-box": "^2.0.7",
     "react-native-modal-datetime-picker": "^14.0.0",
     "react-native-modal-dropdown": "git+https://github.com/siemiatj/react-native-modal-dropdown.git",

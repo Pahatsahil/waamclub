@@ -139,6 +139,7 @@ const Register = () => {
                           <Input
                             borderless
                             placeholder="Name(as per Addhaar Card)"
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             iconContent={
                               <Icon
                                 size={16}
@@ -161,6 +162,7 @@ const Register = () => {
                             borderless
                             placeholder="Email"
                             type={'email-address'}
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             iconContent={
                               <Icon
                                 size={16}
@@ -182,8 +184,9 @@ const Register = () => {
                           <Input
                             placeholder={'Mobile Number'}
                             type={'numeric'}
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             borderless
-                            // maxLength={'10'}
+                            maxLength={10}
                             iconContent={
                               <Icon
                                 size={16}
@@ -205,6 +208,7 @@ const Register = () => {
                           <Input
                             placeholder={'Whatsapp Number'}
                             type={'numeric'}
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             borderless
                             iconContent={
                               <Icon
@@ -227,6 +231,7 @@ const Register = () => {
                           <Input
                             borderless
                             placeholder="Enter the Referral Code"
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             iconContent={
                               <Icon
                                 size={16}
@@ -277,7 +282,7 @@ const Register = () => {
 const styles = StyleSheet.create({
   registerContainer: {
     width: width * 0.9,
-    height: height * 0.55,
+    height: height * 0.65,
     backgroundColor: '#F4F5F7',
     borderRadius: 4,
     shadowColor: argonTheme.COLORS.BLACK,

@@ -14,6 +14,11 @@ import {Button, Icon} from '../components';
 import {Images, argonTheme, fontFamily} from '../constants';
 import {HeaderHeight} from '../constants/utils';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import {Api} from '../api/Api';
+import ImagePicker from 'react-native-image-crop-picker';
+import {StoreContext} from '../redux/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {width, height} = Dimensions.get('screen');
 

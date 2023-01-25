@@ -88,7 +88,7 @@ const ElementsStack = props => {
 const RegisterStack = props => {
   return (
     <Stack.Navigator
-    initialRouteName='Onboarding'
+    initialRouteName='KYC'
       screenOptions={{
         mode: 'card',
         headerShown: 'screen',

@@ -26,7 +26,8 @@ class ArInput extends React.Component {
         style={inputStyles}
         color={argonTheme.COLORS.BLACK}
         type={'default'}
-        // maxLength={'10'}
+        maxLength={10}
+        returnKeyType='default'
         iconContent={
           <Icon
             size={14}

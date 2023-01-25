@@ -42,7 +42,7 @@ const FAQButton = ({isWhite, style, navigation}) => (
     <Icon
       // family="ArgonExtra"
       size={16}
-      name="casket"
+      name="basket"
       color={argonTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
     />
   </TouchableOpacity>

@@ -46,11 +46,11 @@ let validateSchema = yup.object().shape({
 });
 
 const Login = ({navigation}) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [emaiL, setEmail] = useState('');
+  const [passworD, setPassword] = useState('');
   const [loader, setLoader] = useState(false);
   const {state, actions} = useContext<any>(StoreContext);
-
+const Toast = useToast()
   useEffect(() => {
     getData();
     GoogleSignin.configure();
@@ -58,11 +58,13 @@ const Login = ({navigation}) => {
   }, []);
 
   const getData = async () => {
+    setLoader(true)
     try {
       let savedEmail = await AsyncStorage.getItem('email');
       let savedPassword = await AsyncStorage.getItem('password');
       if (savedEmail != null && savedPassword != null) {
         try {
+          Toast.show("API CALLING")
           // const data = ;
           console.log('EMAIL: ', {email: savedEmail, password: savedPassword});
           // const res = axios
@@ -90,7 +92,7 @@ const Login = ({navigation}) => {
             actions.setUserLoginDATA(data.user);
             actions.setUserID(data.user.agent_id);
             actions.setUserToken(res.headers.token);
-            setData();
+            setData(savedEmail, savedPassword);
           } else {
             console.log('ERROR', error);
           }
@@ -102,13 +104,15 @@ const Login = ({navigation}) => {
         navigation.navigate('BottomTabs');
       } else {
         console.log('Empty');
+        setLoader(false)
       }
     } catch (error) {
+      setLoader(false)
       console.log('Error', error);
     }
   };
 
-  const setData = async () => {
+  const setData = async (email,password) => {
     try {
       if (email != null && password != null) {
         await AsyncStorage.setItem('email', email);
@@ -197,28 +201,13 @@ const Login = ({navigation}) => {
       Alert.alert('FB Logged  in');
     }
   };
-  const sendData = async () => {
+  const sendData = async (email: any,password: any) => {
     try {
       if (email != '' && password != '') {
-        // const data = ;
-        console.log('EMAIL: ', {email: email, password: password});
-        // const res = axios
-        //   .post(Api.LOGIN, {email: email, password: password},{})
-        //   .then(resp => {
-        //     console.log('RES', resp.data.data);
-        //   })
-        //   .catch(err => {
-        //     console.log('PASSWORDERROR: ', err.response.data);
-        //     setLoader(false);
-        //   });
-        // if (res) {
-        //   console.log('EMAIL: ', email);
-        //   console.log('PASSWORD: ', password);
-        // }
+        setLoader(true);
         const res = await axios.post(
           Api.LOGIN,
           {email: email, password: password},
-          {},
         );
         const {data, error} = res.data;
         console.log('Header', res.headers.token);
@@ -227,7 +216,7 @@ const Login = ({navigation}) => {
           actions.setUserLoginDATA(data.user);
           actions.setUserID(data.user.agent_id);
           actions.setUserToken(res.headers.token);
-          setData();
+          setData(email,password);
         } else {
           console.log('ERROR', error);
         }
@@ -308,13 +297,12 @@ const Login = ({navigation}) => {
                   onSubmit={(values, action) => {
                     // setRespData(values);
                     let val = values;
-                    setEmail(val['email']);
-                    setPassword(val['password']);
-                    console.log('Emailsubmit: ', email);
-                    console.log('Passwordsubmit: ', password);
+                    setEmail(values['email']);
+                    setPassword(values['password']);
+                    console.log('Emailsubmit: ', emaiL);
+                    console.log('Passwordsubmit: ', passworD);
                     console.log('Submit: ', values);
-                    setLoader(true);
-                    sendData();
+                    sendData(values.email, values.password);
                   }}
                   enableReinitialize
                   validationSchema={validateSchema}>
@@ -336,6 +324,7 @@ const Login = ({navigation}) => {
                             borderless
                             placeholder="Email"
                             type="email"
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             iconContent={
                               <Icon
                                 size={16}
@@ -358,6 +347,7 @@ const Login = ({navigation}) => {
                             password
                             borderless
                             placeholder="Password"
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             iconContent={
                               <Icon
                                 size={16}

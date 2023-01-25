@@ -5,6 +5,9 @@ import {
   Dimensions,
   StatusBar,
   ScrollView,
+  Modal,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {Block, CheckBox, Text, theme} from 'galio-framework';
 
@@ -91,15 +94,23 @@ const Register2 = ({navigation, route}) => {
       console.log('EMAIL: ', data);
       const res = axios
         .post(Api.REGISTER, data, {
-          // headers: {
-          //   Accept: "application/json",
-          //   "Content-Type": "application/json",
-          //   Authorization: `Bearer ${accessToken || ""}`,
-          // },
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${accessToken || ""}`,
+          },
           // auth: accessToken
         })
         .then(resp => {
           console.log('RES', resp.data);
+          Alert.alert('Registration Complete', 'Complete the KYC Progress',
+            // "KYC", navigation.navigate('KYC')
+          )
+          navigation.navigate('KYC', {
+            profile: false,
+            name: name,
+            mobile: mobile
+          })
         })
         .catch(err => {
           console.log('ERRORS: ', err.response.data);
@@ -115,9 +126,21 @@ const Register2 = ({navigation, route}) => {
     }
   };
 
+  const Save = () => {
+    return (
+      <Modal visible={loader} animationType="fade" transparent>
+        <ActivityIndicator
+          color={argonTheme.COLORS.PRIMARY}
+          size={'large'}
+          style={{marginTop: 'auto', marginBottom: 'auto'}}
+        />
+      </Modal>
+    );
+  };
+
   return (
     <Block>
-      {/* <StatusBar hidden /> */}
+      <Save />
       <ImageBackground
         source={Images.RegisterBackground}
         style={{width, height, zIndex: 1, paddingTop: 10}}>
@@ -167,6 +190,7 @@ const Register2 = ({navigation, route}) => {
                           <Input
                             placeholder={'Home Address'}
                             borderless
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             iconContent={
                               <Icon
                                 size={16}
@@ -190,6 +214,7 @@ const Register2 = ({navigation, route}) => {
                           <Input
                             placeholder={'Choose Nearest Hub'}
                             borderless
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             iconContent={
                               <Icon
                                 size={16}
@@ -211,6 +236,7 @@ const Register2 = ({navigation, route}) => {
                           <Input
                             placeholder={'Current Address'}
                             borderless
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             iconContent={
                               <Icon
                                 size={16}
@@ -238,6 +264,7 @@ const Register2 = ({navigation, route}) => {
                           <Input
                             password
                             borderless
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             placeholder="Password"
                             iconContent={
                               <Icon
@@ -261,6 +288,7 @@ const Register2 = ({navigation, route}) => {
                             password
                             borderless
                             placeholder="Confirm Password"
+                            placeholderTextColor={argonTheme.COLORS.BLACK}
                             iconContent={
                               <Icon
                                 size={18}

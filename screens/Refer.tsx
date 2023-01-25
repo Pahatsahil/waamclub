@@ -17,12 +17,16 @@ import {StoreContext} from '../redux/store/index';
 const {width, height} = Dimensions.get('window');
 
 import {Images} from '../constants';
+import axios from 'axios';
+import { Api } from '../api/Api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Refer = () => {
   // const affiliateLink = 'https://waamclub/reiojweYY';
   const customerLink = 'https://aviraspices.in/api/app/register?referral_id=';
   const {state, actions} = useContext<any>(StoreContext);
   const [agentID, setAgentID] = useState<any>(state.userID || []);
+  const [loader, setLoader] = useState(false);
 
   const onShare = link => {
     const shareOptions = {
@@ -40,7 +44,62 @@ const Refer = () => {
   useEffect(() => {
     // data.map(item => console.log(item.agent_id));
     console.log('object', agentID)
-  }, []);
+    getData()
+  }, [agentID]);
+  const getData = async () => {
+    setLoader(true)
+    try {
+      let savedEmail = await AsyncStorage.getItem('email');
+      let savedPassword = await AsyncStorage.getItem('password');
+      if (savedEmail != null && savedPassword != null) {
+        try {
+          // const data = ;
+          console.log('EMAIL: ', {email: savedEmail, password: savedPassword});
+          // const res = axios
+          //   .post(Api.LOGIN, {email: email, password: password},{})
+          //   .then(resp => {
+          //     console.log('RES', resp.data.data);
+          //   })
+          //   .catch(err => {
+          //     console.log('PASSWORDERROR: ', err.response.data);
+          //     setLoader(false);
+          //   });
+          // if (res) {
+          //   console.log('EMAIL: ', email);
+          //   console.log('PASSWORD: ', password);
+          // }
+          const res = await axios.post(
+            Api.LOGIN,
+            {email: savedEmail, password: savedPassword},
+            {},
+          );
+          const {data, error} = res.data;
+          console.log('Header', res.headers.token);
+          if (res) {
+            console.log('DATAA', data.user);
+            actions.setUserLoginDATA(data.user);
+            actions.setUserID(data.user.agent_id);
+            setAgentID(data.user.agent_id);
+            actions.setUserToken(res.headers.token);
+          } else {
+            console.log('ERROR', error);
+          }
+          setLoader(false);
+        } catch (error) {
+          console.log('Errors', error);
+          setLoader(false);
+        }
+        console.log('STATE', state.userLoginDATA);
+        // navigation.navigate('BottomTabs');
+      } else {
+        console.log('Empty');
+        setLoader(false)
+      }
+    } catch (error) {
+      setLoader(false)
+      console.log('Error', error);
+    }
+  };
 
   return (
     <ImageBackground
