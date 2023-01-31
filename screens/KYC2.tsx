@@ -10,42 +10,92 @@ import {
   Modal,
   Image,
   PermissionsAndroid,
+  ActivityIndicator,
 } from 'react-native';
-import {Block, Checkbox, Text, theme} from 'galio-framework';
+import {Block, CheckBox, Text, theme} from 'galio-framework';
 import {Button, Icon, Input} from '../components';
-import {Images, argonTheme} from '../constants';
+import {Images, argonTheme, fontFamily} from '../constants';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-// import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import moment from 'moment/moment';
 import ActionSheet from 'react-native-actionsheet';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {Formik} from 'formik';
+import * as yup from 'yup';
+import axios from 'axios';
+import { Api } from '../api/Api';
 
 const {width, height} = Dimensions.get('screen');
 
+let validateSchema = yup.object().shape({
+  adhaarNumber: yup
+    .string()
+    .required('Please enter a valid Adhaar Number')
+    .min(12, `Adhaar Number cannot be < 12`)
+    .max(12, 'Adhaar Number cannot be > 12'),
+});
 const KYC2 = ({route}) => {
   const navigation = useNavigation();
-  const {data} = route.params
+  const {name, panImage, mobile, panNumber, accNumber, accName,IFSC} = route.params;
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
-  const [imageAdded, setImageAdded] = useState(false);
+  const [imageAdded, setImageAdded] = useState('');
   const [modal, setModal] = useState(false);
   const [date, setDate] = useState('');
+  const [profilePicture, setProfilePicture] = useState<any>(null);
+  const [signature, setSignature] = useState<any>(null);
+  const [loader, setLoader] = useState(false);
   let actionSheet = useRef();
   const BUTTONS = ['Take Photo', 'Choose Photo from Library', 'Cancel'];
 
   const sendData = async (values: any) => {
-
-    // console.log('DATA', senData);
-    // const res = await axios.post(Api.BANK_DETAILS, senData, {
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //     Accept: 'Application/json'
-    //   }
-    // });
-    // console.log('API', res.data);
+    setLoader(true)
+    const senData = new FormData();
+    senData.append('panCard', {
+      type: panImage.mime,
+      uri: panImage.path,
+      name: 'PAN_Image.jpeg',
+    });
+    senData.append('name', name);
+    senData.append('mobile', mobile);
+    senData.append('panNumber', panNumber);
+    senData.append('bankAccountNumber', accNumber);
+    senData.append('bankHolderName', accName);
+    senData.append('IFSC', IFSC);
+    senData.append('adhaarNumber', values['adhaarNumber']);
+    senData.append('DOB', date);
+    senData.append('profilePicture', { type: profilePicture.mime, uri: profilePicture.path, name: 'Profile_Picture.jpeg'});
+    senData.append('signatureImage', { type: signature.mime, uri: signature.path, name: 'Signature.jpeg'});
+    // senData.append(...data)
+    console.log('DATA', senData);
+    try{
+      // navigation.navigate('Login')
+      const res = await axios.post(Api.KYC, senData, {
+        headers: {
+        'Content-Type': 'multipart/form-data',
+        Accept: 'Application/json'
+      }
+    });
+    const {data, error} = res.data;
+    if(!error){
+      console.log('SUCCESS', data)
+      navigation.navigate('Login')
+    }
+    else{
+      console.log("ERROR", error)
+    }
+    setLoader(false)
+  }
+  catch(error){
+    console.log('error', error)
+    setLoader(false)
+  }
   };
-  
+
   useEffect(() => {
-    console.log('first', data)
+    // console.log('first', data);
+    // setProfilePicture('');
+    // setSignature('');
+    setLoader(false)
   }, []);
 
   const PhotofromLibrary = () => {
@@ -53,15 +103,12 @@ const KYC2 = ({route}) => {
       width: 300,
       height: 400,
       cropping: true,
+      mediaType: 'photo'
     }).then(image => {
-      // console.log(image);
-      return (
-        <Modal visible={modal} onRequestClose={() => setModal(modal)}>
-          <Block flex middle card center>
-            <Text>{image}</Text>
-          </Block>
-        </Modal>
-      );
+      console.log(image);
+      {
+        imageAdded =='PP' ? setProfilePicture(image) : setSignature(image);
+      }
     });
   };
   const PhotofromCamera = () => {
@@ -69,38 +116,30 @@ const KYC2 = ({route}) => {
       width: 300,
       height: 400,
       cropping: true,
+      mediaType: 'photo'
     }).then(image => {
       console.log(image);
+      {
+        imageAdded =='PP' ? setProfilePicture(image) : setSignature(image);
+      }
     });
   };
 
-  // const RequestCameraPermission = async () => {
-  //   try {
-  //     const granted = await PermissionsAndroid.request(
-  //       PermissionsAndroid.PERMISSIONS.CAMERA,
-  //       {
-  //         title: 'Cool Photo App Camera Permission',
-  //         message:
-  //           'Cool Photo App needs access to your camera ' +
-  //           'so you can take awesome pictures.',
-  //         buttonNeutral: 'Ask Me Later',
-  //         buttonNegative: 'Cancel',
-  //         buttonPositive: 'OK',
-  //       },
-  //     );
-  //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //       console.log('You can use the camera');
-  //     } else {
-  //       console.log('Camera permission denied');
-  //     }
-  //   } catch (err) {
-  //     console.warn(err);
-  //   }
-  // };
+  const Save = () => {
+    return (
+      <Modal visible={loader} animationType="fade" transparent>
+        <ActivityIndicator
+          color={argonTheme.COLORS.PRIMARY}
+          size={'large'}
+          style={{marginTop: 'auto', marginBottom: 'auto'}}
+        />
+      </Modal>
+    );
+  };
 
   return (
     <Block>
-      <StatusBar hidden />
+      <Save />
       <ImageBackground
         source={Images.RegisterBackground}
         style={{width, height, zIndex: 1, paddingTop: 10}}>
@@ -111,266 +150,235 @@ const KYC2 = ({route}) => {
                 <Text size={25}>KYC</Text>
               </Block>
               <Block flex center>
-                <ScrollView
-                  style={{flex: 1, width: width * 0.8}}
-                  showsVerticalScrollIndicator={false}>
-                  {/* <Block>
-                    <Input
-                      placeholder={'Pan Card Number'}
-                      type={'numeric'}
-                      borderless
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="id-card"
-                          // family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }
-                    />
-                  </Block>
-                  <Block>
-                    <ActionSheet
-                      ref={actionSheet}
-                      title={'Select an Option'}
-                      options={BUTTONS}
-                      cancelButtonIndex={2}
-                      destructiveButtonIndex={2}
-                      onPress={buttonIndex => {
-                        switch (buttonIndex) {
-                          case 0:
-                            PhotofromCamera();
-                            break;
-                          case 1:
-                            PhotofromLibrary();
-                            setModal(!modal);
-                            break;
-                          default:
-                            break;
-                        }
-                      }}
-                    />
-                    <TouchableOpacity
-                      onPress={() => {
-                        actionSheet.current.show();
-                      }}>
-                      <Text
-                        style={[
-                          styles.specialText,
-                          {
-                            color: imageAdded
-                              ? argonTheme.COLORS.HEADER
-                              : argonTheme.COLORS.MUTED,
-                          },
-                        ]}>
-                        Add PAN Card Image
-                      </Text>
-                    </TouchableOpacity>
-                  </Block>
-                  <Block>
-                    <Input
-                      placeholder={'Bank Account Number'}
-                      type={'numeric'}
-                      borderless
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="piggy-bank"
-                          // family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }
-                    />
-                  </Block>
-                  <Block>
-                    <Input
-                      placeholder={'Bank IFSC Code'}
-                      borderless
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="piggy-bank"
-                          // family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }
-                    />
-                  </Block>
-                  <Block>
-                    <Input
-                      placeholder={'Bank A/c Holder Name'}
-                      borderless
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="piggy-bank"
-                          // family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }
-                    />
-                  </Block> */}
-                  <Block>
-                    <Input
-                      placeholder={'Aadhar Card Number'}
-                      type={'numeric'}
-                      borderless
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="id-card"
-                          // family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }
-                    />
-                  </Block>
-                  <Block>
-                    <TouchableOpacity
-                      onPress={() =>
-                        setDatePickerVisible(!isDatePickerVisible)
-                      }>
-                      <>
-                        {/* <Input value={date} 
-                      placeholder={'Date of Birth'}
-                      borderless
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="ic_mail_24px"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }/> */}
-                        <Text
-                          style={[
-                            styles.specialText,
-                            {
-                              color:
-                                date != ''
-                                  ? argonTheme.COLORS.HEADER
-                                  : argonTheme.COLORS.MUTED,
-                            },
-                          ]}>
-                          {date != '' ? date : 'Date of Birth'}
-                        </Text>
-                        {/* <DateTimePickerModal
-                          isVisible={isDatePickerVisible}
-                          mode="date"
-                          onConfirm={date => {
-                            const birthDate = moment(date).format('DD/MM/YYYY');
-                            setDate(birthDate);
-                            setDatePickerVisible(false);
-                          }}
-                          onCancel={() => {
-                            setDatePickerVisible(false);
-                          }}
-                        /> */}
-                      </>
-                    </TouchableOpacity>
-                  </Block>
-                  <Block>
-                    <ActionSheet
-                      ref={actionSheet}
-                      title={'Select an Option'}
-                      options={BUTTONS}
-                      cancelButtonIndex={2}
-                      destructiveButtonIndex={2}
-                      onPress={buttonIndex => {
-                        switch (buttonIndex) {
-                          case 0:
-                            PhotofromCamera();
-                            break;
-                          case 1:
-                            PhotofromLibrary();
-                            setModal(!modal);
-                            break;
-                          default:
-                            break;
-                        }
-                      }}
-                    />
-                    <TouchableOpacity
-                      onPress={() => {
-                        actionSheet.current.show();
-                      }}>
-                      <Text
-                        style={[
-                          styles.specialText,
-                          {
-                            color: imageAdded
-                              ? argonTheme.COLORS.HEADER
-                              : argonTheme.COLORS.MUTED,
-                          },
-                        ]}>
-                        Add your Image
-                      </Text>
-                    </TouchableOpacity>
-                  </Block>
-                  <Block>
-                    <ActionSheet
-                      ref={actionSheet}
-                      title={'Select an Option'}
-                      options={BUTTONS}
-                      cancelButtonIndex={2}
-                      destructiveButtonIndex={2}
-                      onPress={buttonIndex => {
-                        switch (buttonIndex) {
-                          case 0:
-                            PhotofromCamera();
-                            break;
-                          case 1:
-                            PhotofromLibrary();
-                            setModal(!modal);
-                            break;
-                          default:
-                            break;
-                        }
-                      }}
-                    />
-                    <TouchableOpacity
-                      onPress={() => {
-                        actionSheet.current.show();
-                      }}>
-                      <Text
-                        style={[
-                          styles.specialText,
-                          {
-                            color: imageAdded
-                              ? argonTheme.COLORS.HEADER
-                              : argonTheme.COLORS.MUTED,
-                          },
-                        ]}>
-                        Add Signature Image
-                      </Text>
-                    </TouchableOpacity>
-                  </Block>
-                  <Block row width={width * 0.75} style={{marginTop: 10}}>
-                    <Checkbox
-                      checkboxStyle={{
-                        borderWidth: 3,
-                      }}
-                      color={argonTheme.COLORS.PRIMARY}
-                      label="I agree to give my Personal Information"
-                    />
-                  </Block>
-                  <Block middle>
-                    <Button
-                      color="primary"
-                      style={styles.createButton}
-                      onPress={() => navigation.navigate('BottomTabs')}>
-                      <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                        Complete KYC
-                      </Text>
-                    </Button>
-                  </Block>
-                </ScrollView>
+                <Formik
+                  initialValues={{
+                    adhaarNumber: '',
+                  }}
+                  onSubmit={(values, action) => {
+                    // setRespData(values);
+                    // let val = values;
+                    // setEmail(values['email']);
+                    // setName(values['name']);
+                    // setWhatsapp(values['whatsapp_number']);
+                    // setMobile(values['mobile']);
+                    // console.log('Emailsubmit: ', email);
+                    // console.log('Passwordsubmit: ', name);
+                    console.log('Submit: ', values);
+                    // setLoader(true);
+                    sendData(values);
+                  }}
+                  enableReinitialize
+                  validationSchema={validateSchema}>
+                  {({
+                    handleBlur,
+                    handleChange,
+                    handleSubmit,
+                    values,
+                    errors,
+                    touched,
+                    isValid,
+                  }) => {
+                    return (
+                      <ScrollView
+                        style={{flex: 1, width: width * 0.8}}
+                        showsVerticalScrollIndicator={false}>
+                        <Block>
+                          <Input
+                            placeholder={'Aadhar Card Number'}
+                            type={'numeric'}
+                            borderless
+                            maxLength={12}
+                            iconContent={
+                              <Icon
+                                size={16}
+                                color={argonTheme.COLORS.ICON}
+                                name="id-card"
+                                // family="ArgonExtra"
+                                style={styles.inputIcons}
+                              />
+                            }
+                            onChangeText={handleChange('adhaarNumber')}
+                            onBlur={handleBlur('adhaarNumber')}
+                            value={
+                              values.adhaarNumber
+                              // values.adhaarNumber.length % 4 == 0 &&
+                              // values.adhaarNumber.length != 0 &&
+                              // values.adhaarNumber.length < 12
+                              //   ? values.adhaarNumber + '-'
+                              //   : values.adhaarNumber
+                            }
+                          />
+                          {errors.adhaarNumber && touched.adhaarNumber && (
+                            <Text style={styles.errors}>
+                              {errors.adhaarNumber}
+                            </Text>
+                          )}
+                        </Block>
+                        <Block>
+                          <TouchableOpacity
+                            onPress={() =>
+                              setDatePickerVisible(!isDatePickerVisible)
+                            }>
+                            <>
+                              <Text
+                                style={[
+                                  styles.specialText,
+                                  {
+                                    color:
+                                      date != ''
+                                        ? argonTheme.COLORS.BLACK
+                                        : argonTheme.COLORS.MUTED,
+                                  },
+                                ]}>
+                                <Icon
+                                  size={16}
+                                  color={argonTheme.COLORS.ICON}
+                                  name="birthday-cake"
+                                  // family="ArgonExtra"
+                                  style={styles.inputIcons}
+                                />
+                                {date != '' ? date : 'Date of Birth'}
+                              </Text>
+                              <DateTimePickerModal
+                                isVisible={isDatePickerVisible}
+                                mode="date"
+                                onConfirm={date => {
+                                  const birthDate =
+                                    moment(date).format('DD/MM/YYYY');
+                                  setDate(birthDate);
+                                  setDatePickerVisible(false);
+                                }}
+                                onCancel={() => {
+                                  setDatePickerVisible(false);
+                                }}
+                              />
+                            </>
+                          </TouchableOpacity>
+                        </Block>
+                        <Block>
+                          <ActionSheet
+                            ref={actionSheet}
+                            title={'Select an Option'}
+                            options={BUTTONS}
+                            cancelButtonIndex={2}
+                            destructiveButtonIndex={2}
+                            onPress={buttonIndex => {
+                              switch (buttonIndex) {
+                                case 0:
+                                  PhotofromCamera();
+                                  break;
+                                case 1:
+                                  PhotofromLibrary();
+                                  break;
+                                default:
+                                  break;
+                              }
+                            }}
+                          />
+                          <TouchableOpacity
+                            onPress={() => {
+                              setImageAdded('PP')
+                              actionSheet.current.show();
+                            }}>
+                            <Text
+                              style={[
+                                styles.specialText,
+                                {
+                                  color:
+                                    profilePicture
+                                      ? argonTheme.COLORS.BLACK
+                                      : argonTheme.COLORS.MUTED,
+                                },
+                              ]}>
+                              <Icon
+                                size={16}
+                                color={argonTheme.COLORS.ICON}
+                                name="id-card"
+                                // family="ArgonExtra"
+                                style={styles.inputIcons}
+                              />
+                              {profilePicture
+                                ? 'Image Added'
+                                : 'Add your Image'}
+                            </Text>
+                          </TouchableOpacity>
+                        </Block>
+                        <Block>
+                          <ActionSheet
+                            ref={actionSheet}
+                            title={'Select an Option'}
+                            options={BUTTONS}
+                            cancelButtonIndex={2}
+                            destructiveButtonIndex={2}
+                            onPress={buttonIndex => {
+                              switch (buttonIndex) {
+                                case 0:
+                                  PhotofromCamera();
+                                  break;
+                                case 1:
+                                  PhotofromLibrary();
+                                  setModal(!modal);
+                                  break;
+                                default:
+                                  break;
+                              }
+                            }}
+                          />
+                          <TouchableOpacity
+                            onPress={() => {
+                              setImageAdded('S')
+                              actionSheet.current.show();
+                            }}>
+                            <Text
+                              style={[
+                                styles.specialText,
+                                {
+                                  color:
+                                    signature
+                                      ? argonTheme.COLORS.BLACK
+                                      : argonTheme.COLORS.MUTED,
+                                },
+                              ]}>
+                              <Icon
+                                size={16}
+                                color={argonTheme.COLORS.ICON}
+                                name="id-card"
+                                // family="ArgonExtra"
+                                style={styles.inputIcons}
+                              />
+                              {signature
+                                ? 'Signature Added'
+                                : 'Add Signature Image'}
+                            </Text>
+                          </TouchableOpacity>
+                        </Block>
+                        {/* <Block row width={width * 0.75} style={{marginTop: 10}}>
+                          <CheckBox
+                            checkboxStyle={{
+                              borderWidth: 3,
+                            }}
+                            color={argonTheme.COLORS.PRIMARY}
+                            label="I agree to give my Personal Information"
+                            onChange={isSelcted => setSelected(isSelcted)}
+                          />
+                        </Block> */}
+                        <Block middle>
+                          <Button
+                            color="primary"
+                            style={styles.createButton}
+                            onPress={() => handleSubmit()}>
+                            <Text
+                              bold
+                              size={14}
+                              color={argonTheme.COLORS.WHITE}>
+                              Complete KYC
+                            </Text>
+                          </Button>
+                        </Block>
+                      </ScrollView>
+                    );
+                  }}
+                </Formik>
               </Block>
             </Block>
           </Block>
@@ -412,7 +420,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   socialConnect: {
-    marginTop: 20
+    marginTop: 20,
   },
   socialButtons: {
     width: 120,
@@ -443,6 +451,12 @@ const styles = StyleSheet.create({
   createButton: {
     width: width * 0.5,
     marginVertical: 15,
+  },
+  errors: {
+    color: 'red',
+    marginTop: 3,
+    fontSize: 11,
+    fontFamily: fontFamily.WHITNEYMEDIUM,
   },
 });
 

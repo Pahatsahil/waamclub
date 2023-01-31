@@ -8,7 +8,8 @@ const initialState = {
   userEmail: '',
   userToken: '',
   userProfileFields: [],
-  profilePicture: []
+  profilePicture: [],
+  totalReferralAmt: 0
 };
 
 const reducer = (state = initialState, action: { type: any; payload: any }) => {
@@ -31,6 +32,8 @@ const reducer = (state = initialState, action: { type: any; payload: any }) => {
         return { ...state, isLogin: action.payload };   
       case types.SET_PROFILE_PICTURE:
         return { ...state, profilePicture: action.payload };   
+      case types.SET_TOTAL_REFERRAL_AMT:
+        return { ...state, totalReferralAmt: action.payload };   
         default:
           throw new Error("Unexpected action");
       //   const setFormChildren0m_6mField = (data: string) => {

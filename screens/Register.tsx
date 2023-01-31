@@ -107,7 +107,7 @@ const Register = () => {
                     // let val = values;
                     setEmail(values['email']);
                     setName(values['name']);
-                    setWhatsapp(values['whatsapp_number']);
+                    // setWhatsapp(values['whatsapp_number']);
                     setMobile(values['mobile']);
                     console.log('Emailsubmit: ', email);
                     console.log('Passwordsubmit: ', name);
@@ -140,6 +140,7 @@ const Register = () => {
                             borderless
                             placeholder="Name(as per Addhaar Card)"
                             placeholderTextColor={argonTheme.COLORS.BLACK}
+                            maxLength={30}
                             iconContent={
                               <Icon
                                 size={16}
@@ -162,6 +163,7 @@ const Register = () => {
                             borderless
                             placeholder="Email"
                             type={'email-address'}
+                            maxLength={30}
                             placeholderTextColor={argonTheme.COLORS.BLACK}
                             iconContent={
                               <Icon
@@ -209,6 +211,7 @@ const Register = () => {
                             placeholder={'Whatsapp Number'}
                             type={'numeric'}
                             placeholderTextColor={argonTheme.COLORS.BLACK}
+                            maxLength={10}
                             borderless
                             iconContent={
                               <Icon

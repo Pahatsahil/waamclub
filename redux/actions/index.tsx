@@ -28,6 +28,9 @@ export const useActions = (
   const setIsLogin = (data: boolean) => {
     dispatch({ type: types.SET_IS_LOGIN, payload: data });
   };
+  const setTotalReferralAmt = (data: number) => {
+    dispatch({ type: types.SET_TOTAL_REFERRAL_AMT, payload: data });
+  };
   return{
     setUserLoginDATA,
     setUserName,
@@ -37,5 +40,6 @@ export const useActions = (
     setUserToken,
     setUserProfileFields,
     setIsLogin,
+    setTotalReferralAmt,
   }  
 };

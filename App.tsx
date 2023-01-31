@@ -59,9 +59,9 @@ const App = () => {
     console.warn(error);
   }
 
-  function _handleFinishLoading() {
-    setLoading(true);
-  }
+  // function _handleFinishLoading() {
+  //   setLoading(true);
+  // }
 
   // if(!fontsLoaded && !isLoadingComplete) {
   //   return (
@@ -85,8 +85,5 @@ const App = () => {
       </GalioProvider>
     </NavigationContainer>
   );
-  // } else {
-  //   return null
-  // }
 };
 export default App;

@@ -50,10 +50,10 @@ const Register2 = ({navigation, route}) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loader, setLoader] = useState(false);
   const [bothAddress, setBothAddress] = useState(false);
-  // console.log(navigation.getState());
   const {name, email, whatsapp_number, mobile, code} = route.params;
-
+  
   const sendData = (homeAddress: any, landmark: any,password: any,currentAddress: any) => {
+    console.log(name, email, whatsapp_number, mobile, code);
     try {
       // WHEN API GOT PROTECTED
       // RequestAPI.makeRequest(
@@ -103,6 +103,7 @@ const Register2 = ({navigation, route}) => {
         })
         .then(resp => {
           console.log('RES', resp.data);
+          // Alert.alert('Registration Complete!!! Please Login')
           Alert.alert('Registration Complete', 'Complete the KYC Progress',
             // "KYC", navigation.navigate('KYC')
           )
@@ -111,9 +112,12 @@ const Register2 = ({navigation, route}) => {
             name: name,
             mobile: mobile
           })
+          // navigation.navigate('Login')
+          setLoader(false)
         })
         .catch(err => {
           console.log('ERRORS: ', err.response.data);
+          setLoader(false);
         });
       // if (res) {
       //   console.log('EMAIL: ', email);
@@ -191,6 +195,7 @@ const Register2 = ({navigation, route}) => {
                             placeholder={'Home Address'}
                             borderless
                             placeholderTextColor={argonTheme.COLORS.BLACK}
+                            maxLength={30}
                             iconContent={
                               <Icon
                                 size={16}
@@ -215,6 +220,7 @@ const Register2 = ({navigation, route}) => {
                             placeholder={'Choose Nearest Hub'}
                             borderless
                             placeholderTextColor={argonTheme.COLORS.BLACK}
+                            maxLength={30}
                             iconContent={
                               <Icon
                                 size={16}
@@ -237,6 +243,7 @@ const Register2 = ({navigation, route}) => {
                             placeholder={'Current Address'}
                             borderless
                             placeholderTextColor={argonTheme.COLORS.BLACK}
+                            maxLength={30}
                             iconContent={
                               <Icon
                                 size={16}
@@ -265,6 +272,7 @@ const Register2 = ({navigation, route}) => {
                             password
                             borderless
                             placeholderTextColor={argonTheme.COLORS.BLACK}
+                            maxLength={30}
                             placeholder="Password"
                             iconContent={
                               <Icon
@@ -289,6 +297,7 @@ const Register2 = ({navigation, route}) => {
                             borderless
                             placeholder="Confirm Password"
                             placeholderTextColor={argonTheme.COLORS.BLACK}
+                            maxLength={30}
                             iconContent={
                               <Icon
                                 size={18}

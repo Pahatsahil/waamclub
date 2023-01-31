@@ -7,14 +7,14 @@ import {
   SafeAreaView,
 } from 'react-native';
 import {Block, Checkbox, Text, theme} from 'galio-framework';
-import {Button, Icon, Input} from '../components';
-import {Images, argonTheme, fontFamily} from '../constants';
-import Theme from '../constants/Theme';
+import {Button, Icon, Input} from '../../components';
+import {Images, argonTheme, fontFamily} from '../../constants';
+import Theme from '../../constants/Theme';
 import {useNavigation} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('screen');
 
-const History = () => {
+const ProductPayment = () => {
   const navigation = useNavigation();
 
   const transactions = [
@@ -278,4 +278,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default History;
+export default ProductPayment;

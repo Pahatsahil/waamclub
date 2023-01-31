@@ -34,7 +34,7 @@ import OfferPage from '../screens/OfferPage';
 import {Images} from '../constants';
 import {Button} from 'native-base';
 import Settings from '../screens/Settings';
-import History from '../screens/History';
+import PaymentHistory from '../screens/Payment_History/PaymentHistory';
 import Payments from '../screens/Payment';
 import Rating from '../screens/Rating';
 import LimitedTimeDeals from '../screens/LimitedTimeDeals';
@@ -88,7 +88,7 @@ const ElementsStack = props => {
 const RegisterStack = props => {
   return (
     <Stack.Navigator
-    initialRouteName='KYC'
+    initialRouteName='Onboarding'
       screenOptions={{
         mode: 'card',
         headerShown: 'screen',
@@ -251,8 +251,8 @@ const ProfileStack = props => {
         }}
       />
       <Stack.Screen
-        name="Payment History"
-        component={History}
+        name="PaymentHistory"
+        component={PaymentHistory}
         options={{
           header: ({navigation, scene}) => (
             <Header

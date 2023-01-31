@@ -10,6 +10,7 @@ import {
   Modal,
   Image,
   PermissionsAndroid,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {Block, Checkbox, Text, theme} from 'galio-framework';
 import {Button, Icon, Input} from '../components';
@@ -55,7 +56,7 @@ let validateSchema = yup.object().shape({
 const {width, height} = Dimensions.get('screen');
 
 const KYC = ({navigation, route}) => {
-  // const {profile, name, mobile} = route.params;
+  const {profile, name, mobile} = route.params;
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [loader, setLoader] = useState(false);
   const [panImage, setPANImage] = useState<any>(null);
@@ -63,30 +64,24 @@ const KYC = ({navigation, route}) => {
   const [date, setDate] = useState('');
   let actionSheet = useRef();
   const BUTTONS = ['Take Photo', 'Choose Photo from Library', 'Cancel'];
-  const profile = false,
-    name = 'Aman',
-    mobile = '1286121233';
-    
+  // const profile = false,
+  //   name = 'Aman',
+  //   mobile = '1286121233';
+
   useEffect(() => {
     console.log('Callback', profile);
   }, []);
 
   const sendData = (values: any) => {
-    const senData = new FormData();
-    senData.append('panCard', {
-      type: panImage.mime,
-      uri: panImage.path,
-      name: 'PAN_Image.jpeg',
-    });
-    senData.append('name', name);
-    senData.append('mobile', mobile);
-    senData.append('panNumber', values['panNumber'].toUpperCase());
-    senData.append('bankAccountNumber', values['accNumber']);
-    senData.append('bankHolderName', values['accName'].toUpperCase());
-    senData.append('IFSC', values['ifscCode'].toUpperCase());
 
     navigation.navigate('KYC2', {
-      data: senData,
+      name: name,
+      mobile: mobile,
+      panImage: panImage,
+      panNumber: values['panNumber'].toUpperCase(),
+      accNumber: values['accNumber'],
+      accName: values['accName'].toUpperCase(),
+      IFSC: values['ifscCode'].toUpperCase(),
     });
   };
 
@@ -136,11 +131,10 @@ const KYC = ({navigation, route}) => {
 
   return (
     <Block>
-      <StatusBar hidden />
       <ImageBackground
         source={Images.RegisterBackground}
         style={{width, height, zIndex: 1, paddingTop: 10}}>
-        <Block center flex style={{marginTop: height * 0.12}}>
+        <Block center flex style={{marginTop: height * 0.05}}>
           <Block style={styles.registerContainer}>
             <Block flex>
               <Block flex={0.13} middle style={styles.socialConnect}>
@@ -185,13 +179,16 @@ const KYC = ({navigation, route}) => {
                       <ScrollView
                         style={{flex: 1, width: width * 0.75}}
                         showsVerticalScrollIndicator={false}>
-                        <>
+                        <KeyboardAvoidingView
+                          style={{flex: 1}}
+                          behavior="position"
+                          enabled>
                           <Block>
                             <Input
                               placeholder={'Pan Card Number'}
                               type={
                                 values.panNumber.length > 4 &&
-                                values.panNumber.length > 9
+                                values.panNumber.length < 9
                                   ? 'numeric'
                                   : 'default'
                               }
@@ -208,7 +205,7 @@ const KYC = ({navigation, route}) => {
                               }
                               onChangeText={handleChange('panNumber')}
                               onBlur={handleBlur('panNumber')}
-                              value={values.panNumber}
+                              value={values.panNumber.toUpperCase()}
                             />
                             {errors.panNumber && touched.panNumber && (
                               <Text style={styles.errors}>
@@ -258,7 +255,7 @@ const KYC = ({navigation, route}) => {
                                   },
                                 ]}>
                                 {panImage
-                                  ? 'Image Added'
+                                  ? 'PAN Card Image Added'
                                   : 'Add PAN Card Image'}
                               </Text>
                             </TouchableOpacity>
@@ -305,7 +302,7 @@ const KYC = ({navigation, route}) => {
                               }
                               onChangeText={handleChange('ifscCode')}
                               onBlur={handleBlur('ifscCode')}
-                              value={values.ifscCode}
+                              value={values.ifscCode.toUpperCase()}
                             />
                             {errors.ifscCode && touched.ifscCode && (
                               <Text style={styles.errors}>
@@ -316,6 +313,7 @@ const KYC = ({navigation, route}) => {
                           <Block>
                             <Input
                               placeholder={'Bank A/c Holder Name'}
+                              maxLength={30}
                               borderless
                               iconContent={
                                 <Icon
@@ -328,7 +326,7 @@ const KYC = ({navigation, route}) => {
                               }
                               onChangeText={handleChange('accName')}
                               onBlur={handleBlur('accName')}
-                              value={values.accName}
+                              value={values.accName.toUpperCase()}
                             />
                             {errors.accName && touched.accName && (
                               <Text style={styles.errors}>
@@ -355,22 +353,22 @@ const KYC = ({navigation, route}) => {
                         </Text>
                       </Button>
                     </Block> */}
-                        </>
-                        <Block middle>
-                          <Button
-                            color="primary"
-                            style={styles.createButton}
-                            onPress={() => {
-                              handleSubmit();
-                            }}>
-                            <Text
-                              bold
-                              size={14}
-                              color={argonTheme.COLORS.WHITE}>
-                              {'Next'}
-                            </Text>
-                          </Button>
-                        </Block>
+                          <Block middle>
+                            <Button
+                              color="primary"
+                              style={styles.createButton}
+                              onPress={() => {
+                                handleSubmit();
+                              }}>
+                              <Text
+                                bold
+                                size={14}
+                                color={argonTheme.COLORS.WHITE}>
+                                {'Next'}
+                              </Text>
+                            </Button>
+                          </Block>
+                        </KeyboardAvoidingView>
                       </ScrollView>
                     );
                   }}
@@ -399,6 +397,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     shadowOpacity: 0.05,
     elevation: 2,
+    flexDirection: 'row',
   },
   errors: {
     color: 'red',

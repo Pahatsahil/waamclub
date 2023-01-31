@@ -18,15 +18,16 @@ const {width, height} = Dimensions.get('window');
 
 import {Images} from '../constants';
 import axios from 'axios';
-import { Api } from '../api/Api';
+import {Api} from '../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Refer = () => {
   // const affiliateLink = 'https://waamclub/reiojweYY';
-  const customerLink = 'https://aviraspices.in/api/app/register?referral_id=';
+  const customerLink = 'https://waamclub.com/api/app/register?referral_id=';
   const {state, actions} = useContext<any>(StoreContext);
   const [agentID, setAgentID] = useState<any>(state.userID || []);
   const [loader, setLoader] = useState(false);
+  const [share, canShare] = useState(false);
 
   const onShare = link => {
     const shareOptions = {
@@ -43,61 +44,71 @@ const Refer = () => {
 
   useEffect(() => {
     // data.map(item => console.log(item.agent_id));
-    console.log('object', agentID)
-    getData()
+    console.log('object', agentID);
+    getData();
+    setLoader(false);
   }, [agentID]);
   const getData = async () => {
-    setLoader(true)
-    try {
-      let savedEmail = await AsyncStorage.getItem('email');
-      let savedPassword = await AsyncStorage.getItem('password');
-      if (savedEmail != null && savedPassword != null) {
-        try {
-          // const data = ;
-          console.log('EMAIL: ', {email: savedEmail, password: savedPassword});
-          // const res = axios
-          //   .post(Api.LOGIN, {email: email, password: password},{})
-          //   .then(resp => {
-          //     console.log('RES', resp.data.data);
-          //   })
-          //   .catch(err => {
-          //     console.log('PASSWORDERROR: ', err.response.data);
-          //     setLoader(false);
-          //   });
-          // if (res) {
-          //   console.log('EMAIL: ', email);
-          //   console.log('PASSWORD: ', password);
-          // }
-          const res = await axios.post(
-            Api.LOGIN,
-            {email: savedEmail, password: savedPassword},
-            {},
-          );
-          const {data, error} = res.data;
-          console.log('Header', res.headers.token);
-          if (res) {
-            console.log('DATAA', data.user);
-            actions.setUserLoginDATA(data.user);
-            actions.setUserID(data.user.agent_id);
-            setAgentID(data.user.agent_id);
-            actions.setUserToken(res.headers.token);
-          } else {
-            console.log('ERROR', error);
+    setLoader(true);
+    if (state.userLoginData) {
+      console.log('LOGIN DATA', state.userLoginData.is_enabled);
+      parseInt(state.userLoginData.is_enabled) ? canShare(true) : canShare(false);
+    } else {
+      try {
+        let savedEmail = await AsyncStorage.getItem('email');
+        let savedPassword = await AsyncStorage.getItem('password');
+        if (savedEmail != null && savedPassword != null) {
+          try {
+            // const data = ;
+            console.log('EMAIL: ', {
+              email: savedEmail,
+              password: savedPassword,
+            });
+            // const res = axios
+            //   .post(Api.LOGIN, {email: email, password: password},{})
+            //   .then(resp => {
+            //     console.log('RES', resp.data.data);
+            //   })
+            //   .catch(err => {
+            //     console.log('PASSWORDERROR: ', err.response.data);
+            //     setLoader(false);
+            //   });
+            // if (res) {
+            //   console.log('EMAIL: ', email);
+            //   console.log('PASSWORD: ', password);
+            // }
+            const res = await axios.post(
+              Api.LOGIN,
+              {email: savedEmail, password: savedPassword},
+              {},
+            );
+            const {data, error} = res.data;
+            console.log('Header', res.headers.token);
+            if (res) {
+              console.log('DATAA', data.user);
+              actions.setUserLoginDATA(data.user);
+              actions.setUserID(data.user.agent_id);
+              setAgentID(data.user.agent_id);
+              actions.setUserToken(res.headers.token);
+              data.user.is_enabled ? canShare(true) : canShare(false);
+            } else {
+              console.log('ERROR', error);
+            }
+            setLoader(false);
+          } catch (error) {
+            console.log('Errors', error);
+            setLoader(false);
           }
-          setLoader(false);
-        } catch (error) {
-          console.log('Errors', error);
+          console.log('STATE', state.userLoginDATA);
+          // navigation.navigate('BottomTabs');
+        } else {
+          console.log('Empty');
           setLoader(false);
         }
-        console.log('STATE', state.userLoginDATA);
-        // navigation.navigate('BottomTabs');
-      } else {
-        console.log('Empty');
-        setLoader(false)
+      } catch (error) {
+        setLoader(false);
+        console.log('Error', error);
       }
-    } catch (error) {
-      setLoader(false)
-      console.log('Error', error);
     }
   };
 
@@ -137,10 +148,16 @@ const Refer = () => {
             marginBottom: 10,
             alignItems: 'center',
           }}>
-          <Text style={{color: argonTheme.COLORS.BLACK,}}>Your Referral ID: </Text>
+          <Text style={{color: argonTheme.COLORS.BLACK}}>
+            Your Referral ID:{' '}
+          </Text>
           <View>
-            <Text style={[styles.boldText, {color: argonTheme.COLORS.ERROR, fontWeight: 'bold'}]}>
-              {agentID}
+            <Text
+              style={[
+                styles.boldText,
+                {color: argonTheme.COLORS.ERROR, fontWeight: 'bold'},
+              ]}>
+              {share?agentID:'NOT AVAILABLE'}
             </Text>
           </View>
         </View>
@@ -152,29 +169,61 @@ const Refer = () => {
             marginBottom: 10,
             alignItems: 'center',
           }}>
-          <Text style={{color: argonTheme.COLORS.BLACK, fontWeight: 'bold'}}>Link: </Text>
+          <Text style={{color: argonTheme.COLORS.BLACK, fontWeight: 'bold'}}>
+            Link:{' '}
+          </Text>
 
-          <TouchableOpacity
-            onPress={() => {
-              onShare(customerLink+agentID);
-            }}
-            style={{
-              backgroundColor: argonTheme.COLORS.WHITE,
-              borderWidth: 2,
-              borderColor: argonTheme.COLORS.ERROR,
-              borderStyle: 'dashed',
-              paddingHorizontal: 10,
-              width: width * 0.6
-            }}>
-            <Text style={[styles.boldText, {color: argonTheme.COLORS.ERROR}]}>
-              {customerLink+agentID}
-            </Text>
-          </TouchableOpacity>
+          {share ? (
+            <TouchableOpacity
+              onPress={() => {
+                onShare(customerLink + agentID);
+              }}
+              style={{
+                backgroundColor: argonTheme.COLORS.WHITE,
+                borderWidth: 2,
+                borderColor: argonTheme.COLORS.ERROR,
+                borderStyle: 'dashed',
+                paddingHorizontal: 10,
+                width: width * 0.6,
+              }}>
+              <Text style={[styles.boldText, {color: argonTheme.COLORS.ERROR}]}>
+                {customerLink}
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: argonTheme.COLORS.BLACK,
+                    marginBottom: 4,
+                    textAlign: 'center',
+                  }}>
+                  {agentID}
+                </Text>
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <View
+              style={{
+                backgroundColor: argonTheme.COLORS.WHITE,
+                borderWidth: 2,
+                borderColor: argonTheme.COLORS.ERROR,
+                borderStyle: 'dashed',
+                paddingHorizontal: 10,
+                width: width * 0.6,
+              }}>
+              <Text style={[styles.boldText, {color: argonTheme.COLORS.ERROR}]}>
+                You cannot Refer Right now Try Again Later
+              </Text>
+            </View>
+          )}
         </View>
         <Text
           style={[
             styles.boldText,
-            {color: argonTheme.COLORS.BLACK, textTransform: 'capitalize'},
+            {
+              color: argonTheme.COLORS.PRIMARY,
+              textTransform: 'capitalize',
+              fontWeight: 'bold',
+            },
           ]}>
           Tap to Copy
         </Text>

@@ -50,7 +50,7 @@ const Login = ({navigation}) => {
   const [passworD, setPassword] = useState('');
   const [loader, setLoader] = useState(false);
   const {state, actions} = useContext<any>(StoreContext);
-const Toast = useToast()
+  const Toast = useToast();
   useEffect(() => {
     getData();
     GoogleSignin.configure();
@@ -58,13 +58,13 @@ const Toast = useToast()
   }, []);
 
   const getData = async () => {
-    setLoader(true)
+    setLoader(true);
     try {
       let savedEmail = await AsyncStorage.getItem('email');
       let savedPassword = await AsyncStorage.getItem('password');
       if (savedEmail != null && savedPassword != null) {
         try {
-          Toast.show("API CALLING")
+          Toast.show('API CALLING');
           // const data = ;
           console.log('EMAIL: ', {email: savedEmail, password: savedPassword});
           // const res = axios
@@ -104,19 +104,21 @@ const Toast = useToast()
         navigation.navigate('BottomTabs');
       } else {
         console.log('Empty');
-        setLoader(false)
+        setLoader(false);
       }
     } catch (error) {
-      setLoader(false)
+      setLoader(false);
       console.log('Error', error);
     }
   };
 
-  const setData = async (email,password) => {
+  const setData = async (email, password) => {
+    setLoader(true);
     try {
       if (email != null && password != null) {
         await AsyncStorage.setItem('email', email);
         await AsyncStorage.setItem('password', password);
+        setLoader(false);
         console.log('email: ', email);
         console.log('Password: ', password);
         console.log('STATE', state.userLoginData);
@@ -127,6 +129,7 @@ const Toast = useToast()
     } catch (error) {
       console.log('Error', error);
     }
+    setLoader(false);
   };
 
   const googleLogin = async () => {
@@ -201,14 +204,14 @@ const Toast = useToast()
       Alert.alert('FB Logged  in');
     }
   };
-  const sendData = async (email: any,password: any) => {
+  const sendData = async (email: any, password: any) => {
     try {
       if (email != '' && password != '') {
         setLoader(true);
-        const res = await axios.post(
-          Api.LOGIN,
-          {email: email, password: password},
-        );
+        const res = await axios.post(Api.LOGIN, {
+          email: email,
+          password: password,
+        });
         const {data, error} = res.data;
         console.log('Header', res.headers.token);
         if (res) {
@@ -216,7 +219,7 @@ const Toast = useToast()
           actions.setUserLoginDATA(data.user);
           actions.setUserID(data.user.agent_id);
           actions.setUserToken(res.headers.token);
-          setData(email,password);
+          setData(email, password);
         } else {
           console.log('ERROR', error);
         }
@@ -227,6 +230,7 @@ const Toast = useToast()
       console.log('Errors', error);
       setLoader(false);
     }
+    setLoader(false);
   };
 
   const Save = () => {
@@ -325,6 +329,8 @@ const Toast = useToast()
                             placeholder="Email"
                             type="email"
                             placeholderTextColor={argonTheme.COLORS.BLACK}
+                            maxLength={30}
+                            // returnKeyType={'next'}
                             iconContent={
                               <Icon
                                 size={16}
@@ -344,6 +350,7 @@ const Toast = useToast()
                         </Block>
                         <Block width={width * 0.8}>
                           <Input
+                            maxLength={30}
                             password
                             borderless
                             placeholder="Password"

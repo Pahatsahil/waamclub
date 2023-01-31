@@ -10,6 +10,7 @@ import SmallCard from './SmallCard';
 import BigCards from './BigCards';
 import MediumCards from './MediumCards';
 import ProductCards from './ProductCards';
+import Accordian from './Accordian'
 
 export {
   Button,
@@ -23,5 +24,6 @@ export {
   SmallCard,
   BigCards,
   MediumCards,
-  ProductCards
+  ProductCards,
+  Accordian
 };
