@@ -192,6 +192,7 @@ const KYC = ({navigation, route}) => {
                                   ? 'numeric'
                                   : 'default'
                               }
+                              autoComplete='characters'
                               borderless
                               style={{textTransform: 'capitalise'}}
                               iconContent={
@@ -205,7 +206,7 @@ const KYC = ({navigation, route}) => {
                               }
                               onChangeText={handleChange('panNumber')}
                               onBlur={handleBlur('panNumber')}
-                              value={values.panNumber.toUpperCase()}
+                              value={values.panNumber}
                             />
                             {errors.panNumber && touched.panNumber && (
                               <Text style={styles.errors}>
@@ -290,6 +291,7 @@ const KYC = ({navigation, route}) => {
                               // type={(values.panNumber.length > 5 && values.panNumber.length > 9)?'numeric':'default'}
                               borderless
                               maxLength={11}
+                              autoComplete='characters'
                               style={{textTransform: 'capitalise'}}
                               iconContent={
                                 <Icon
@@ -302,7 +304,7 @@ const KYC = ({navigation, route}) => {
                               }
                               onChangeText={handleChange('ifscCode')}
                               onBlur={handleBlur('ifscCode')}
-                              value={values.ifscCode.toUpperCase()}
+                              value={values.ifscCode}
                             />
                             {errors.ifscCode && touched.ifscCode && (
                               <Text style={styles.errors}>
@@ -315,6 +317,7 @@ const KYC = ({navigation, route}) => {
                               placeholder={'Bank A/c Holder Name'}
                               maxLength={30}
                               borderless
+                              autoComplete='characters'
                               iconContent={
                                 <Icon
                                   size={16}
@@ -326,7 +329,7 @@ const KYC = ({navigation, route}) => {
                               }
                               onChangeText={handleChange('accName')}
                               onBlur={handleBlur('accName')}
-                              value={values.accName.toUpperCase()}
+                              value={values.accName}
                             />
                             {errors.accName && touched.accName && (
                               <Text style={styles.errors}>

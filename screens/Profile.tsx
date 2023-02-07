@@ -46,7 +46,7 @@ const Profile = () => {
       setEmail(state.userLoginData.email);
       setMobile(state.userLoginData.mobile);
       setProfilePicture(state.userLoginData.profile_image);
-      console.log('PP', profilePicture);
+      console.log('PP', profilePictureLink);
       setPassword(state.userLoginData.enc_pass);
       getImage();
     } else {
@@ -86,8 +86,8 @@ const Profile = () => {
               setEmail(data.user.email);
               setMobile(data.user.mobile);
               setPassword(savedPassword);
-              setProfilePicture(data.user.profile_image);
-              console.log('PP', profilePicture);
+              setProfilePictureLink(data.user.profile_image);
+              console.log('Profile Picture Link', profilePictureLink);
               getImage();
             } else {
               console.log('ERROR', error);
@@ -106,8 +106,12 @@ const Profile = () => {
 
   const getImage = async () => {
     try {
-      fetch(`http://waamclub.com/${profilePictureLink}`)
+      fetch(
+        // `http://aviraspices.in/${profilePictureLink}`
+        `http://aviraspices.in/documents/{G1OQ4ZZ3FuSY55d7nVbt1UkuIukXA5uWMjCZw2tj.jpg}`
+        )
         .then(response => {
+          console.log('RESPONSE GETTING AFTER API')
           console.log(response);
           if (response.ok) {
             return response.url;
@@ -117,7 +121,7 @@ const Profile = () => {
         .then(imageUrl => {
           // Use the image URL to display the image in your React Native app
           setProfilePicture(imageUrl);
-          console.log('IMAGE', profilePicture);
+          // console.log('IMAGE', profilePicture);
           console.log('IMAGE', imageUrl);
         })
         .catch(error => {
@@ -139,12 +143,13 @@ const Profile = () => {
               <Image
                 source={{
                   uri:
+                    'http://aviraspices.in/documents/G1OQ4ZZ3FuSY55d7nVbt1UkuIukXA5uWMjCZw2tj.jpg' ||
                     // profilePicture ||
                     //  `http://waamclub.com/${profilePicture}`
                     // `data:image/png;base64,${profilePicture}`
                     Images.ProfilePicture,
                 }}
-                style={styles.avatar}
+                style={[styles.avatar,{backgroundColor: argonTheme.COLORS.BORDER_COLOR}]}
               />
               <Text
                 style={{fontFamily: fontFamily.MONTSERRATBOLD}}

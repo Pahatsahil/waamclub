@@ -327,7 +327,7 @@ const Login = ({navigation}) => {
                           <Input
                             borderless
                             placeholder="Email"
-                            type="email"
+                            type="email-address"
                             placeholderTextColor={argonTheme.COLORS.BLACK}
                             maxLength={30}
                             // returnKeyType={'next'}

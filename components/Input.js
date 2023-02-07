@@ -27,7 +27,9 @@ class ArInput extends React.Component {
         color={argonTheme.COLORS.BLACK}
         type={'default'}
         maxLength={10}
+        editable={true}
         returnKeyType='default'
+        autoCapitalize='sentences'
         iconContent={
           <Icon
             size={14}

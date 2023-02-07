@@ -48,7 +48,7 @@ const ReferralPayment = () => {
     try {
       // 6B97 = ID to check data
       const temp = '6B97';
-      const res = await axios.get(`http://waamclub.com/api/app/getdetails/${state.userID}`)
+      const res = await axios.get(`https://www.waamclub.com/api/app/getdetails/${state.userID}`)
       // const res = await axios.get(
       //   `http://waamclub.com/api/app/getdetails/${temp}`,
       // );

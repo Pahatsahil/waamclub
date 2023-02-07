@@ -13,17 +13,17 @@ import {Block, theme, DeckSwiper} from 'galio-framework';
 import {argonTheme, blocks} from '../constants';
 import Share from 'react-native-share';
 import {StoreContext} from '../redux/store/index';
+import {Api} from '../api/Api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {Images} from '../constants';
+import ShareImg from '../assets/Share'
 
 const {width, height} = Dimensions.get('window');
 
-import {Images} from '../constants';
-import axios from 'axios';
-import {Api} from '../api/Api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 const Refer = () => {
   // const affiliateLink = 'https://waamclub/reiojweYY';
-  const customerLink = 'https://waamclub.com/api/app/register?referral_id=';
+  const customerLink = 'https://www.waamclub.com/api/app/register?referral_id=';
   const {state, actions} = useContext<any>(StoreContext);
   const [agentID, setAgentID] = useState<any>(state.userID || []);
   const [loader, setLoader] = useState(false);
@@ -31,7 +31,7 @@ const Refer = () => {
 
   const onShare = link => {
     const shareOptions = {
-      message: `Join Waamclub with this Link and earn cashback  ${link}`,
+      message: `Join Waamclub with this Link and earn cashback  ${link}\n Referral id is: ${agentID}`,
       // url: Images.Facebook
     };
     try {
@@ -118,16 +118,7 @@ const Refer = () => {
       style={styles.profileContainer}
       imageStyle={styles.profileBackground}>
       <Block flex card center style={styles.container}>
-        <Image
-          resizeMode="contain"
-          source={Images.WhatsAppBig}
-          style={{
-            width: width * 0.5,
-            height: height * 0.2,
-            alignSelf: 'center',
-            marginBottom: 25,
-          }}
-        />
+        <ShareImg width={width * 0.3} height={width * 0.3} color={argonTheme.COLORS.PRIMARY} />
         <Text style={styles.boldText}>
           Invite friends & earn flat 10% of their cashback amount, Everytime
           they shop!!
