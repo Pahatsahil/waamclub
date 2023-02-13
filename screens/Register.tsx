@@ -108,7 +108,7 @@ const Register = () => {
                       errors,
                       touched,
                       isValid,
-                      setTouched
+                      setTouched,
                     }) => {
                       return (
                         <ScrollView style={{flex: 1}}>
@@ -192,9 +192,10 @@ const Register = () => {
                               maxLength={10}
                               borderless
                               style={{
-                                backgroundColor: sameWhatsApp
-                                  ? argonTheme.COLORS.BORDER_COLOR
-                                  : argonTheme.COLORS.WHITE,
+                                backgroundColor: argonTheme.COLORS.WHITE,
+                                // sameWhatsApp
+                                //   ? argonTheme.COLORS.BORDER_COLOR
+                                //   : argonTheme.COLORS.WHITE,
                               }}
                               iconContent={
                                 <Icon
@@ -205,31 +206,25 @@ const Register = () => {
                                   style={styles.inputIcons}
                                 />
                               }
-                              editable={!sameWhatsApp}
-                              onChangeText={sameWhatsApp? null : handleChange('whatsapp_number')}
-                              onBlur={sameWhatsApp?null : handleBlur('whatsapp_number')}
-                              value={
-                                sameWhatsApp
-                                  ? values.mobile
-                                  : values.whatsapp_number
-                              }
+                              editable={true}
+                              onChangeText={handleChange('whatsapp_number')}
+                              onBlur={handleBlur('whatsapp_number')}
+                              value={values.whatsapp_number}
                             />
-                            {sameWhatsApp
-                              ? null
-                              : errors.whatsapp_number &&
-                                touched.whatsapp_number && (
-                                  <Text style={styles.errors}>
-                                    {errors.whatsapp_number}
-                                  </Text>
-                                )}
-                            <Checkbox
+                            {errors.whatsapp_number &&
+                              touched.whatsapp_number && (
+                                <Text style={styles.errors}>
+                                  {errors.whatsapp_number}
+                                </Text>
+                              )}
+                            {/* <Checkbox
                               value="Same as Mobile Number"
                               onChange={isSelected => {
                                 setSameWhatsapp(isSelected);
                               }}
                               defaultIsChecked={sameWhatsApp}>
                               Same as Mobile Number
-                            </Checkbox>
+                            </Checkbox> */}
                           </Block>
                           <Block width={width * 0.8} style={{marginBottom: 5}}>
                             <Input
@@ -254,7 +249,7 @@ const Register = () => {
                           <Block middle>
                             <Button
                               color={isValid ? 'primary' : 'grey'}
-                              disabled={sameWhatsApp ? !isValid : false}
+                              disabled={!isValid || false}
                               style={styles.createButton}
                               onPress={() => {
                                 handleSubmit();

@@ -161,7 +161,7 @@ const Refer = () => {
             alignItems: 'center',
           }}>
           <Text style={{color: argonTheme.COLORS.BLACK, fontWeight: 'bold'}}>
-            Link:{' '}
+           Affiliate Link:{' '}
           </Text>
 
           {share ? (
@@ -207,7 +207,7 @@ const Refer = () => {
             </View>
           )}
         </View>
-        <Text
+        {share && <Text
           style={[
             styles.boldText,
             {
@@ -217,7 +217,73 @@ const Refer = () => {
             },
           ]}>
           Tap to Copy
-        </Text>
+        </Text>}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingVertical: 10,
+            marginBottom: 10,
+            alignItems: 'center',
+          }}>
+          <Text style={{color: argonTheme.COLORS.BLACK, fontWeight: 'bold'}}>
+           Customer Link:{' '}
+          </Text>
+
+          {share ? (
+            <TouchableOpacity
+              onPress={() => {
+                onShare(customerLink + agentID);
+              }}
+              style={{
+                backgroundColor: argonTheme.COLORS.WHITE,
+                borderWidth: 2,
+                borderColor: argonTheme.COLORS.ERROR,
+                borderStyle: 'dashed',
+                paddingHorizontal: 10,
+                width: width * 0.6,
+              }}>
+              <Text style={[styles.boldText, {color: argonTheme.COLORS.ERROR}]}>
+                {customerLink}
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: argonTheme.COLORS.BLACK,
+                    marginBottom: 4,
+                    textAlign: 'center',
+                  }}>
+                  {agentID}
+                </Text>
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <View
+              style={{
+                backgroundColor: argonTheme.COLORS.WHITE,
+                borderWidth: 2,
+                borderColor: argonTheme.COLORS.ERROR,
+                borderStyle: 'dashed',
+                paddingHorizontal: 10,
+                width: width * 0.6,
+              }}>
+              <Text style={[styles.boldText, {color: argonTheme.COLORS.ERROR}]}>
+                You cannot Refer Right now Try Again Later
+              </Text>
+            </View>
+          )}
+        </View>
+        {share && <Text
+          style={[
+            styles.boldText,
+            {
+              color: argonTheme.COLORS.PRIMARY,
+              textTransform: 'capitalize',
+              fontWeight: 'bold',
+            },
+          ]}>
+          Tap to Copy
+        </Text>}
         {/* <Block
           card
           style={{
@@ -317,7 +383,7 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     width: width,
-    height: height * 0.65,
+    height: height * 0.75,
     padding: 0,
     zIndex: 1,
   },

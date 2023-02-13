@@ -49,6 +49,7 @@ const Login = ({navigation}) => {
   const [emaiL, setEmail] = useState('');
   const [passworD, setPassword] = useState('');
   const [loader, setLoader] = useState(false);
+  const [dematCount, setDematCount] = useState(0);
   const {state, actions} = useContext<any>(StoreContext);
   const Toast = useToast();
   useEffect(() => {
@@ -89,6 +90,9 @@ const Login = ({navigation}) => {
           console.log('Header', res.headers.token);
           if (res) {
             console.log('DATAA', data.user);
+            console.log('DATAA', data.TotalReferral);
+            setDematCount(data.TotalReferral);
+            actions.setDematReferralCount(dematCount);
             actions.setUserLoginDATA(data.user);
             actions.setUserID(data.user.agent_id);
             actions.setUserToken(res.headers.token);
@@ -215,10 +219,13 @@ const Login = ({navigation}) => {
         const {data, error} = res.data;
         console.log('Header', res.headers.token);
         if (res) {
-          console.log('DATAA', data.user);
+          console.log('DATAA', data);
+          console.log('Total', data.TotalReferral);
           actions.setUserLoginDATA(data.user);
           actions.setUserID(data.user.agent_id);
           actions.setUserToken(res.headers.token);
+          setDematCount(data.TotalReferral);
+          actions.setDematReferralCount(dematCount);
           setData(email, password);
         } else {
           console.log('ERROR', error);

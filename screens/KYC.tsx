@@ -192,7 +192,7 @@ const KYC = ({navigation, route}) => {
                                   ? 'numeric'
                                   : 'default'
                               }
-                              autoComplete='characters'
+                              autoCapitalize='characters'
                               borderless
                               style={{textTransform: 'capitalise'}}
                               iconContent={
@@ -291,7 +291,7 @@ const KYC = ({navigation, route}) => {
                               // type={(values.panNumber.length > 5 && values.panNumber.length > 9)?'numeric':'default'}
                               borderless
                               maxLength={11}
-                              autoComplete='characters'
+                              autoCapitalize='characters'
                               style={{textTransform: 'capitalise'}}
                               iconContent={
                                 <Icon
@@ -317,7 +317,7 @@ const KYC = ({navigation, route}) => {
                               placeholder={'Bank A/c Holder Name'}
                               maxLength={30}
                               borderless
-                              autoComplete='characters'
+                              autoCapitalize='characters'
                               iconContent={
                                 <Icon
                                   size={16}

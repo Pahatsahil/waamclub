@@ -564,8 +564,8 @@ const BottomTabs = ({navigation, route}) => {
         }}
       />
       <Tab.Screen
-        name="ACS"
-        component={AffiliateCustomer}
+        name="Hot Offers"
+        component={HotOffers}
         options={{
           // header: ({navigation, scene}) => (
           //   <Header title="Hot Offers" navigation={navigation} scene={scene} />

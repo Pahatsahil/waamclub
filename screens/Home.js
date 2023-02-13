@@ -15,6 +15,7 @@ import {argonTheme, blocks, fontFamily} from '../constants';
 import {SliderBox} from 'react-native-image-slider-box';
 import Theme from '../constants/Theme';
 import { useNavigation } from '@react-navigation/native';
+import demats from '../constants/demats';
 const {width, height} = Dimensions.get('window');
 
 const Home = () => {
@@ -117,6 +118,28 @@ const Home = () => {
           </ScrollView>
         </Block>
         <Block flex>
+        <Text size={15} style={styles.heading}>
+            Demat Offers
+          </Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <Block flex row>
+              <Card
+                navi={'OfferPage'}
+                item={demats[0]}
+                style={{marginRight: theme.SIZES.BASE}}
+              />
+              <Card
+                navi={'OfferPage'}
+                item={demats[1]}
+                style={{marginRight: theme.SIZES.BASE}}
+              />
+              <Card
+                navi={'OfferPage'}
+                item={demats[2]}
+                style={{marginRight: theme.SIZES.BASE}}
+              />
+            </Block>
+          </ScrollView>
           <Text
             size={15}
             style={{

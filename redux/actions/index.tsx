@@ -31,6 +31,9 @@ export const useActions = (
   const setTotalReferralAmt = (data: number) => {
     dispatch({ type: types.SET_TOTAL_REFERRAL_AMT, payload: data });
   };
+  const setDematReferralCount = (data: number) => {
+    dispatch({ type: types.SET_DEMAT_REFERRAL_COUNT, payload: data });
+  };
   return{
     setUserLoginDATA,
     setUserName,
@@ -41,5 +44,6 @@ export const useActions = (
     setUserProfileFields,
     setIsLogin,
     setTotalReferralAmt,
+    setDematReferralCount
   }  
 };

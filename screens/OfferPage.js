@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   StyleSheet,
   Dimensions,
@@ -13,27 +13,116 @@ import {Block, Text, theme} from 'galio-framework';
 import {Button, Modal} from 'native-base';
 import {Icon} from '../components';
 import {Images, argonTheme, fontFamily} from '../constants';
-import {HeaderHeight} from '../constants/utils';
-import {useNavigation} from '@react-navigation/native';
+import {StoreContext} from '../redux/store/index';
+import Share from 'react-native-share';
 
 const {width, height} = Dimensions.get('screen');
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
-const OfferPage = () => {
-  const navigation = useNavigation();
+const OfferPage = ({navigation, route}) => {
+  const {data} = route.params;
+  const productLink = 'https://www.waamclub.com/ragister/demat?referral_id=';
+  const {state, actions} = useContext(StoreContext);
+  const [agentID, setAgentID] = useState(state.userID || []);
   const [offerTerms, setOfferTerms] = useState(false);
   const [rewardTerms, setRewardTerms] = useState(false);
+  const [loader, setLoader] = useState(false);
   const amount = 8;
+
+  useEffect(() => {
+    console.log('Count', state.dematReferralCount);
+    console.log('object', agentID);
+    getData();
+  }, [agentID]);
+
+  const getData = async () => {
+    setLoader(true);
+    if (state.userLoginData) {
+      console.log('LOGIN DATA', state.userLoginData.is_enabled);
+      parseInt(state.userLoginData.is_enabled)
+        ? canShare(true)
+        : canShare(false);
+    } else {
+      try {
+        let savedEmail = await AsyncStorage.getItem('email');
+        let savedPassword = await AsyncStorage.getItem('password');
+        if (savedEmail != null && savedPassword != null) {
+          try {
+            // const data = ;
+            console.log('EMAIL: ', {
+              email: savedEmail,
+              password: savedPassword,
+            });
+            // const res = axios
+            //   .post(Api.LOGIN, {email: email, password: password},{})
+            //   .then(resp => {
+            //     console.log('RES', resp.data.data);
+            //   })
+            //   .catch(err => {
+            //     console.log('PASSWORDERROR: ', err.response.data);
+            //     setLoader(false);
+            //   });
+            // if (res) {
+            //   console.log('EMAIL: ', email);
+            //   console.log('PASSWORD: ', password);
+            // }
+            const res = await axios.post(
+              Api.LOGIN,
+              {email: savedEmail, password: savedPassword},
+              {},
+            );
+            const {data, error} = res.data;
+            console.log('Header', res.headers.token);
+            if (res) {
+              console.log('DATAA', data.user);
+              actions.setUserLoginDATA(data.user);
+              actions.setUserID(data.user.agent_id);
+              setAgentID(data.user.agent_id);
+              actions.setUserToken(res.headers.token);
+              data.user.is_enabled ? canShare(true) : canShare(false);
+            } else {
+              console.log('ERROR', error);
+            }
+            setLoader(false);
+          } catch (error) {
+            console.log('Errors', error);
+            setLoader(false);
+          }
+          console.log('STATE', state.userLoginDATA);
+          // navigation.navigate('BottomTabs');
+        } else {
+          console.log('Empty');
+          setLoader(false);
+        }
+      } catch (error) {
+        setLoader(false);
+        console.log('Error', error);
+      }
+    }
+  };
+  const onShare = link => {
+    const shareOptions = {
+      message: `Join Waamclub with this Link and earn cashback  ${link}\n Referral id is: ${agentID}`,
+      // url: Images.Facebook
+    };
+    try {
+      const response = Share.open(shareOptions);
+      console.log(response);
+    } catch (error) {
+      console.log('Errror', error);
+    }
+  };
 
   const Rewards = () => {
     return (
       <Modal
-        isOpen={rewardTerms} top='1/4'
+        isOpen={rewardTerms}
+        top="1/4"
         onClose={() => setRewardTerms(!rewardTerms)}
         animationPreset="slide">
         <Modal.CloseButton />
-        <Modal.Header w={'full'} >
+        <Modal.Header w={'full'}>
           <Text
             size={18}
             bold
@@ -71,15 +160,16 @@ const OfferPage = () => {
       </Modal>
     );
   };
-  
+
   const OfferTerms = () => {
     return (
       <Modal
-        isOpen={offerTerms} top='1/4'
+        isOpen={offerTerms}
+        top="1/4"
         onClose={() => setOfferTerms(!offerTerms)}
         animationPreset="slide">
         <Modal.CloseButton />
-        <Modal.Header w={'full'} >
+        <Modal.Header w={'full'}>
           <Text
             size={18}
             bold
@@ -120,220 +210,260 @@ const OfferPage = () => {
 
   return (
     <Block flex style={styles.profile}>
-      {/* <ScrollView  StickyHeaderComponent={Header}> */}
-      <ImageBackground
-        source={Images.ProfileBackground}
-        style={styles.profileContainer}>
-        <Block
-          row
-          style={{height: 20, alignItems: 'center', width: width * 0.7}}>
-          <Icon
-            name={'chevron-left'}
-            size={20}
-            onPress={() => navigation.goBack()}
-            color={argonTheme.COLORS.WHITE}
-            style={{marginRight: 15}}
-          />
-          <Text
-            style={{
-              fontWeight: 'bold',
-              color: argonTheme.COLORS.WHITE,
-              fontSize: 17,
-              fontFamily: fontFamily.MONTSERRATBOLD,
-            }}>
-            Amazon
-          </Text>
-        </Block>
-        <Block width={width * 0.2} style={{marginTop: '-2%'}}>
-          <Button
-            rounded={'full'}
-            color={argonTheme.COLORS.PRIMARY}
-            // size={'xs'}
-            leftIcon={
-              <Icon
-                name={'share'}
-                size={16}
-                onPress={() => navigation.goBack()}
-                color={argonTheme.COLORS.WHITE}
-                // style={{marginRight: 2}}
-              />
-            }>
-            <Text size={14} color={argonTheme.COLORS.WHITE}>
-              Share
-            </Text>
-          </Button>
-        </Block>
-      </ImageBackground>
-      <Block flex style={styles.profileBackground}>
-        <Block flex style={styles.profileCard}>
+      <ScrollView
+        style={{flex: 1}}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="always">
+        <ImageBackground
+          source={Images.ProfileBackground}
+          style={styles.profileContainer}>
           <Block
-            middle
-            center
-            style={{
-              marginTop: '-15%',
-              paddingVertical: 10,
-              paddingHorizontal: 15,
-              backgroundColor: argonTheme.COLORS.WHITE,
-              borderRadius: 5,
-              elevation: 5,
-            }}>
-            <Image source={Images.Gmail} />
-          </Block>
-          <Block center style={{marginVertical: 20}}>
+            row
+            style={{height: 20, alignItems: 'center', width: width * 0.7}}>
+            <Icon
+              name={'chevron-left'}
+              size={20}
+              onPress={() => navigation.goBack()}
+              color={argonTheme.COLORS.WHITE}
+              style={{marginRight: 15}}
+            />
             <Text
-              color={argonTheme.COLORS.BLACK}
-              style={{textAlign: 'center', marginBottom: 10}}
-              size={16}
-              bold>
-              Earn upto 10% on Amazon while purchasing Mobiles, Fashion, Beauty,
-              Kitchen
-            </Text>
-            <Text color={argonTheme.COLORS.INFO} style={{textAlign: 'center'}}>
-              Earn upto 10% on Amazon while purchasing Mobiles, Fashion, Beauty,
-              Kitchen
+              style={{
+                fontWeight: 'bold',
+                color: argonTheme.COLORS.WHITE,
+                fontSize: 17,
+                fontFamily: fontFamily.MONTSERRATBOLD,
+              }}>
+              {data.demat ? data.title : 'Amazon'}
             </Text>
           </Block>
-          <Button background={argonTheme.COLORS.WARNING}>
-            <Text color={argonTheme.COLORS.WHITE} bold>
-              Earn Upto {amount}% Rewards
-            </Text>
-          </Button>
-        </Block>
-        <Block
-          height={10}
-          style={{
-            backgroundColor: argonTheme.COLORS.SECONDARY2,
-            // paddingBottom: 10,
-            marginHorizontal: '-10%',
-          }}></Block>
-        <Block
-          flex
-          row
-          style={{
-            backgroundColor: argonTheme.COLORS.WHITE,
-            paddingHorizontal: 10,
-            paddingVertical: 20,
-          }}>
-          <Block flex width={width / 2.3}>
+          <Block width={width * 0.2} style={{marginTop: '-2%'}}>
             <Button
-              style={{marginBottom: 10}}
+              rounded={'full'}
+              color={argonTheme.COLORS.PRIMARY}
+              // size={'xs'}
+              onPress={() => onShare(productLink + agentID)}
+              leftIcon={
+                <Icon
+                  name={'share'}
+                  size={16}
+                  // onPress={() => navigation.goBack()}
+                  color={argonTheme.COLORS.WHITE}
+                  // style={{marginRight: 2}}
+                />
+              }>
+              <Text size={14} color={argonTheme.COLORS.WHITE}>
+                Share
+              </Text>
+            </Button>
+          </Block>
+        </ImageBackground>
+        <Block flex style={styles.profileBackground}>
+          <Block flex style={styles.profileCard}>
+            <Block
+              middle
+              center
+              style={{
+                marginTop: '-15%',
+                paddingVertical: 10,
+                paddingHorizontal: 15,
+                backgroundColor: argonTheme.COLORS.WHITE,
+                borderRadius: 5,
+                elevation: 5,
+              }}>
+              <Image
+                style={{height: 50, width: 100}}
+                source={data.demat ? data.image : Images.Gmail}
+                resizeMode="contain"
+              />
+            </Block>
+            <Block center style={{marginTop: 20}}>
+              <Text
+                color={argonTheme.COLORS.BLACK}
+                style={{textAlign: 'justify', marginBottom: 10}}
+                // size={16}
+              >
+                {data.about}
+              </Text>
+            </Block>
+            <Block style={{marginVertical: 10, marginBottom: 20}}>
+              <Text
+                color={argonTheme.COLORS.INFO}
+                style={{textAlign: 'justify'}}>
+                In order to get rewards and be a Product Seller on our Waamclub.
+                You need to the following:
+              </Text>
+              <Text
+                color={argonTheme.COLORS.BLACK}
+                style={{textAlign: 'justify'}}
+                bold>
+                1. Share the {data.title} referral link from our app to your
+                friends and family
+              </Text>
+              <Text
+                color={argonTheme.COLORS.BLACK}
+                style={{textAlign: 'justify'}}
+                bold>
+                2. Make sure they register and open an acccount
+              </Text>
+              <Text
+                color={argonTheme.COLORS.BLACK}
+                style={{textAlign: 'justify'}}
+                bold>
+                3. After sucessfull opening an account under {data.title} you
+                will get your commison.
+              </Text>
+              <Text
+                color={argonTheme.COLORS.BLACK}
+                style={{textAlign: 'justify'}}
+                bold>
+                4. After their first sucessfull trade.. You will get more
+                Rewards
+              </Text>
+            </Block>
+            <Button paddingY={'1'}
               background={argonTheme.COLORS.WARNING}
-              onPress={() => navigation.navigate('Hot Offers')}
-              size={'xs'}
-              px={'1'}>
-              <Block row center>
-                <Icon
-                  name={'plus-circle'}
-                  size={14}
-                  family={'FontAwesome5'}
-                  color={argonTheme.COLORS.WHITE}
-                  style={{marginRight: 5}}
-                />
-                <Text color={argonTheme.COLORS.WHITE} bold>
-                  See More Offers {'>'}
-                </Text>
-              </Block>
-            </Button>
-            <Button
-              justifyContent={'flex-start'}
-              style={{marginBottom: 10}}
-              background={argonTheme.COLORS.PRIMARY}
-              onPress={() => setRewardTerms(true)}
-              size={'xs'}
-              px={'6'}>
-              <Block row center>
-                <Icon
-                  name={'plus-circle'}
-                  size={14}
-                  family={'FontAwesome5'}
-                  color={argonTheme.COLORS.WHITE}
-                  style={{marginRight: 5}}
-                />
-                <Text color={argonTheme.COLORS.WHITE} bold>
-                  Reward Rates
-                </Text>
-              </Block>
-            </Button>
-            <Button
-              justifyContent={'flex-start'}
-              style={{marginBottom: 10}}
-              background={argonTheme.COLORS.BUTTON_PINK}
-              onPress={() => setOfferTerms(true)}
-              size={'xs'}
-              px={'6'}>
-              <Block row center>
-                <Icon
-                  name={'plus-circle'}
-                  size={14}
-                  family={'FontAwesome5'}
-                  color={argonTheme.COLORS.WHITE}
-                  style={{marginRight: 5}}
-                />
-                <Text color={argonTheme.COLORS.WHITE} bold>
-                  Offers Terms
-                </Text>
-              </Block>
+              onPress={() => onShare(productLink + agentID)}>
+              <Text color={argonTheme.COLORS.WHITE} bold>
+                Share Referral Link now
+              </Text>
             </Button>
           </Block>
-          <Block flex width={width / 2.5} style={{paddingHorizontal: 5}}>
-            <Block row center>
-              <Icon
-                name={'user-circle'}
-                size={15}
-                family={'FontAwesome'}
-                color={argonTheme.COLORS.WARNING}
-                style={{marginRight: 5}}
-              />
-              <Text color={argonTheme.COLORS.BLACK} bold size={15}>
-                Purchase Today
-              </Text>
+          {/* <Block
+            height={10}
+            style={{
+              backgroundColor: argonTheme.COLORS.SECONDARY2,
+              // paddingBottom: 10,
+              marginHorizontal: '-10%',
+            }}></Block> */}
+          <Block
+            flex
+            row
+            style={{
+              backgroundColor: argonTheme.COLORS.WHITE,
+              paddingHorizontal: 10,
+              paddingVertical: 20,
+            }}>
+            <Block flex width={width / 2.3}>
+              <Button
+                style={{marginBottom: 10}}
+                background={argonTheme.COLORS.WARNING}
+                onPress={() => navigation.navigate('Home')}
+                size={'xs'}
+                px={'1'}>
+                <Block row center>
+                  <Icon
+                    name={'plus-circle'}
+                    size={14}
+                    family={'FontAwesome5'}
+                    color={argonTheme.COLORS.WHITE}
+                    style={{marginRight: 5}}
+                  />
+                  <Text color={argonTheme.COLORS.WHITE} bold>
+                    See More Offers {'>'}
+                  </Text>
+                </Block>
+              </Button>
+              <Button
+                justifyContent={'flex-start'}
+                style={{marginBottom: 10}}
+                background={argonTheme.COLORS.PRIMARY}
+                onPress={() => setRewardTerms(true)}
+                size={'xs'}
+                px={'6'}>
+                <Block row center>
+                  <Icon
+                    name={'plus-circle'}
+                    size={14}
+                    family={'FontAwesome5'}
+                    color={argonTheme.COLORS.WHITE}
+                    style={{marginRight: 5}}
+                  />
+                  <Text color={argonTheme.COLORS.WHITE} bold>
+                    Reward Rates
+                  </Text>
+                </Block>
+              </Button>
+              <Button
+                justifyContent={'flex-start'}
+                style={{marginBottom: 10}}
+                background={argonTheme.COLORS.BUTTON_PINK}
+                onPress={() => setOfferTerms(true)}
+                size={'xs'}
+                px={'6'}>
+                <Block row center>
+                  <Icon
+                    name={'plus-circle'}
+                    size={14}
+                    family={'FontAwesome5'}
+                    color={argonTheme.COLORS.WHITE}
+                    style={{marginRight: 5}}
+                  />
+                  <Text color={argonTheme.COLORS.WHITE} bold>
+                    Offers Terms
+                  </Text>
+                </Block>
+              </Button>
             </Block>
-            <Block>
-              <Text
-                style={{paddingLeft: '17%'}}
-                color={argonTheme.COLORS.BLACK}
-                bold
-                size={15}>
-                |{'\n'}|{'\n'}|{'\n'}
-              </Text>
-              <Block style={{paddingLeft: '14%', marginTop: '-10%'}}>
+            <Block flex width={width / 2.5} style={{paddingHorizontal: 5}}>
+              <Block row center>
                 <Icon
-                  name={'angle-double-down'}
-                  size={22}
+                  name={'user-circle'}
+                  size={15}
                   family={'FontAwesome'}
-                  color={argonTheme.COLORS.PRIMARY}
-                  // style={{paddingRight: 5}}
+                  color={argonTheme.COLORS.WARNING}
+                  style={{marginRight: 5}}
                 />
-              </Block>
-              <Text
-                style={{paddingLeft: '17%', marginTop: '-2%'}}
-                color={argonTheme.COLORS.BLACK}
-                bold
-                size={15}>
-                |{'\n'}|{'\n'}|{'\n'}
-              </Text>
-            </Block>
-            <Block row center style={{marginTop: '-18%'}}>
-              <Icon
-                name={'gift'}
-                size={18}
-                family={'FontAwesome'}
-                color={argonTheme.COLORS.BUTTON_PINK}
-                style={{marginRight: 12}}
-              />
-              <Block>
-                <Text color={argonTheme.COLORS.BLACK} size={15}>
-                  Rewards in
-                </Text>
                 <Text color={argonTheme.COLORS.BLACK} bold size={15}>
-                  24 hours after{'\n'} Shipment
+                  Complete {10 - state.dematReferralCount} Referral{'\n'} Today
                 </Text>
+              </Block>
+              <Block>
+                <Text
+                  style={{paddingLeft: '17%'}}
+                  color={argonTheme.COLORS.BLACK}
+                  bold
+                  size={15}>
+                  |{'\n'}|{'\n'}|{'\n'}
+                </Text>
+                <Block style={{paddingLeft: '14%', marginTop: '-10%'}}>
+                  <Icon
+                    name={'angle-double-down'}
+                    size={22}
+                    family={'FontAwesome'}
+                    color={argonTheme.COLORS.PRIMARY}
+                    // style={{paddingRight: 5}}
+                  />
+                </Block>
+                <Text
+                  style={{paddingLeft: '17%', marginTop: '-2%'}}
+                  color={argonTheme.COLORS.BLACK}
+                  bold
+                  size={15}>
+                  |{'\n'}|{'\n'}|{'\n'}
+                </Text>
+              </Block>
+              <Block row center style={{marginTop: '-18%'}}>
+                <Icon
+                  name={'gift'}
+                  size={18}
+                  family={'FontAwesome'}
+                  color={argonTheme.COLORS.BUTTON_PINK}
+                  style={{marginRight: 12}}
+                />
+                <Block>
+                  <Text color={argonTheme.COLORS.BLACK} size={15}>
+                    Rewards in
+                  </Text>
+                  <Text color={argonTheme.COLORS.BLACK} bold size={15}>
+                    24 hours after{'\n'} Shipment
+                  </Text>
+                </Block>
               </Block>
             </Block>
           </Block>
         </Block>
-      </Block>
-      {/* </ScrollView> */}
+      </ScrollView>
       <OfferTerms />
       <Rewards />
     </Block>

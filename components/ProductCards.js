@@ -34,7 +34,7 @@ const ProductCards = ({
   ];
 
   return (
-    <TouchableWithoutFeedback onPress={() => navigation.navigate(navi)}>
+    <TouchableWithoutFeedback onPress={() => navigation.navigate(navi,{data: item})}>
       <Block card flex style={cardContainer}>
         <Block flex style={imgContainer}>
           <Image source={{uri: item.image}} style={imageStyles} />

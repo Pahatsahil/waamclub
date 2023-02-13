@@ -9,7 +9,8 @@ const initialState = {
   userToken: '',
   userProfileFields: [],
   profilePicture: [],
-  totalReferralAmt: 0
+  totalReferralAmt: 0,
+  dematReferralCount: 0,
 };
 
 const reducer = (state = initialState, action: { type: any; payload: any }) => {
@@ -34,6 +35,8 @@ const reducer = (state = initialState, action: { type: any; payload: any }) => {
         return { ...state, profilePicture: action.payload };   
       case types.SET_TOTAL_REFERRAL_AMT:
         return { ...state, totalReferralAmt: action.payload };   
+      case types.SET_DEMAT_REFERRAL_COUNT:
+        return { ...state, dematReferralCount: action.payload };   
         default:
           throw new Error("Unexpected action");
       //   const setFormChildren0m_6mField = (data: string) => {

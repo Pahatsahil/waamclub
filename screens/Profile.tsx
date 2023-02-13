@@ -108,7 +108,7 @@ const Profile = () => {
     try {
       fetch(
         // `http://aviraspices.in/${profilePictureLink}`
-        `http://aviraspices.in/documents/{G1OQ4ZZ3FuSY55d7nVbt1UkuIukXA5uWMjCZw2tj.jpg}`
+        `http://www.waamclub.com//documents/{G1OQ4ZZ3FuSY55d7nVbt1UkuIukXA5uWMjCZw2tj.jpg}`
         )
         .then(response => {
           console.log('RESPONSE GETTING AFTER API')
@@ -143,7 +143,7 @@ const Profile = () => {
               <Image
                 source={{
                   uri:
-                    'http://aviraspices.in/documents/G1OQ4ZZ3FuSY55d7nVbt1UkuIukXA5uWMjCZw2tj.jpg' ||
+                    // 'https://www.waamclub.com//documents/G1OQ4ZZ3FuSY55d7nVbt1UkuIukXA5uWMjCZw2tj.jpg' ||
                     // profilePicture ||
                     //  `http://waamclub.com/${profilePicture}`
                     // `data:image/png;base64,${profilePicture}`
@@ -234,7 +234,7 @@ const Profile = () => {
                   </Text>
                 </Block>
               </TouchableOpacity> */}
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => navigation.navigate('KYC', {profile: true})}>
                 <Block row center card style={styles.screens}>
                   <Block row center style={{width: width * 0.75}}>
@@ -258,7 +258,7 @@ const Profile = () => {
                     {'>'}
                   </Text>
                 </Block>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity onPress={() => navigation.navigate('Payments')}>
                 <Block row center card style={styles.screens}>
                   <Block row center style={{width: width * 0.75}}>

@@ -65,7 +65,7 @@ const BigCards = ({
           }}
           size={20}
         />
-        <TouchableWithoutFeedback onPress={() => navigation.navigate(navi)}>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate(navi,{data: item})}>
           <Block
             style={{
               padding: 10,

@@ -15,7 +15,6 @@ import {argonTheme} from '../constants';
 const {width, height} = Dimensions.get('window');
 const Card = ({navi, item, horizontal, full, style, ctaColor, imageStyle}) => {
   const navigation = useNavigation();
-
   const imageStyles = [
     full ? styles.fullImage : styles.horizontalImage,
     imageStyle,
@@ -28,10 +27,14 @@ const Card = ({navi, item, horizontal, full, style, ctaColor, imageStyle}) => {
   ];
 
   return (
-    <TouchableWithoutFeedback onPress={() => navigation.navigate(navi)}>
+    <TouchableWithoutFeedback onPress={() => navigation.navigate(navi, {data: item})}>
       <Block flex style={cardContainer}>
         <Block style={imgContainer}>
-          <Image source={{uri: item.image}} style={imageStyles} />
+          {item.demat ? (
+            <Image source={item.image} resizeMode='contain' style={imageStyles} />
+          ) : (
+            <Image source={{uri: item.image}} style={imageStyles} />
+          )}
         </Block>
       </Block>
     </TouchableWithoutFeedback>
