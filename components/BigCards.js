@@ -23,6 +23,8 @@ const BigCards = ({
   style,
   ctaColor,
   imageStyle,
+  locked,
+  count
 }) => {
   const navigation = useNavigation();
   const imageStyles = [styles.horizontalImage, imageStyle];
@@ -34,55 +36,82 @@ const BigCards = ({
   ];
 
   return (
-    // <TouchableWithoutFeedback onPress={() => Alert.alert('Image')}>
+    <TouchableWithoutFeedback onPress={() => {
+      locked
+        ? navigation.navigate('LockModal', {data: item, count: count})
+        : navigation.navigate(navi, {data: item});
+    }}>
     <Block row={horizontal} card flex style={cardContainer}>
       <Block flex style={imgContainer}>
-        <Image source={{uri: item.image}} style={imageStyles} />
+        {locked ? (
+          <Image
+            source={require('../assets/Lock.png')}
+            resizeMode="contain"
+            style={imageStyles}
+          />
+        ) : (
+          <Image source={{uri: item.image}} style={imageStyles} />
+        )}
       </Block>
-      <Block flex row space="between" style={styles.cardDescription}>
-        {/* <Text size={14} style={styles.cardTitle}>
+      {locked ? (
+        <Text
+          color={argonTheme.COLORS.BLACK}
+          bold
+          style={{textAlign: 'center', marginVertical: 10}}
+          size={16}>
+          {10 - count} {' '}
+          Referral left
+        </Text>
+      ) : (
+        <Block flex row space="between" style={styles.cardDescription}>
+          {/* <Text size={14} style={styles.cardTitle}>
               1:45:00
             </Text> */}
 
-        <CountDown
-          until={6300}
-          onFinish={() => alert('finished')}
-          onPress={() => alert('hello')}
-          showSeparator={true}
-          timeLabels={false}
-          digitStyle={{
-            backgroundColor: argonTheme.COLORS.WHITE,
-          }}
-          separatorStyle={{
-            fontSize: 14,
-            padding: 0,
-            margin: 0,
-            color: argonTheme.COLORS.BLACK,
-          }}
-          digitTxtStyle={{
-            fontSize: 14,
-            color: argonTheme.COLORS.BLACK,
-          }}
-          size={20}
-        />
-        <TouchableWithoutFeedback onPress={() => navigation.navigate(navi,{data: item})}>
-          <Block
-            style={{
-              padding: 10,
-              backgroundColor: argonTheme.COLORS.BUTTON_PINK,
-            }}>
-            <Text
-              size={13}
-              muted={!ctaColor}
-              color={argonTheme.COLORS.SECONDARY}
-              style={{textTransform: 'uppercase'}}>
-              Grab Deal
-            </Text>
-          </Block>
-        </TouchableWithoutFeedback>
-      </Block>
+          <CountDown
+            until={6300}
+            onFinish={() => alert('finished')}
+            onPress={() => alert('hello')}
+            showSeparator={true}
+            timeLabels={false}
+            digitStyle={{
+              backgroundColor: argonTheme.COLORS.WHITE,
+            }}
+            separatorStyle={{
+              fontSize: 14,
+              padding: 0,
+              margin: 0,
+              color: argonTheme.COLORS.BLACK,
+            }}
+            digitTxtStyle={{
+              fontSize: 14,
+              color: argonTheme.COLORS.BLACK,
+            }}
+            size={20}
+          />
+          <TouchableWithoutFeedback onPress={() => {
+          locked
+            ? navigation.navigate('LockModal', {data: item, count: count})
+            : navigation.navigate(navi, {data: item});
+        }}>
+            <Block
+              style={{
+                padding: 10,
+                backgroundColor: argonTheme.COLORS.BUTTON_PINK,
+              }}>
+              <Text
+                size={13}
+                muted={!ctaColor}
+                color={argonTheme.COLORS.SECONDARY}
+                style={{textTransform: 'uppercase'}}>
+                Grab Deal
+              </Text>
+            </Block>
+          </TouchableWithoutFeedback>
+        </Block>
+      )}
     </Block>
-    // </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback>
   );
 };
 

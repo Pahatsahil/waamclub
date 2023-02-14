@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {withNavigation} from '@react-navigation/compat';
 import PropTypes from 'prop-types';
 import {
@@ -11,9 +11,21 @@ import {
 import {Block, Text, theme} from 'galio-framework';
 import {useNavigation} from '@react-navigation/native';
 import {argonTheme} from '../constants';
+import LockModal from './LockModal';
 
 const {width, height} = Dimensions.get('window');
-const Card = ({navi, item, horizontal, full, style, ctaColor, imageStyle}) => {
+const Card = ({
+  navi,
+  item,
+  horizontal,
+  full,
+  style,
+  ctaColor,
+  imageStyle,
+  locked,
+  count,
+}) => {
+  const [showModal, setShowModal] = useState(false);
   const navigation = useNavigation();
   const imageStyles = [
     full ? styles.fullImage : styles.horizontalImage,
@@ -25,19 +37,45 @@ const Card = ({navi, item, horizontal, full, style, ctaColor, imageStyle}) => {
     horizontal ? styles.horizontalStyles : styles.verticalStyles,
     styles.shadow,
   ];
-
   return (
-    <TouchableWithoutFeedback onPress={() => navigation.navigate(navi, {data: item})}>
-      <Block flex style={cardContainer}>
-        <Block style={imgContainer}>
-          {item.demat ? (
-            <Image source={item.image} resizeMode='contain' style={imageStyles} />
-          ) : (
-            <Image source={{uri: item.image}} style={imageStyles} />
-          )}
+    <>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          locked
+            ? navigation.navigate('LockModal', {data: item, count: count})
+            : navigation.navigate(navi, {data: item});
+        }}>
+        <Block flex style={cardContainer}>
+          <Block style={imgContainer}>
+            {}
+            {item.demat ? (
+              <Image
+                source={item.image}
+                resizeMode="contain"
+                style={imageStyles}
+              />
+            ) : locked ? (
+              <Image
+                source={require('../assets/Lock.png')}
+                resizeMode="contain"
+                style={imageStyles}
+              />
+            ) : (
+              <Image source={{uri: item.image}} style={imageStyles} />
+            )}
+            {locked && (
+              <Text
+                color={argonTheme.COLORS.BLACK}
+                bold
+                style={{textAlign: 'center', marginVertical: 10}}
+                size={16}>
+                {10 - count} Referral left
+              </Text>
+            )}
+          </Block>
         </Block>
-      </Block>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </>
   );
 };
 

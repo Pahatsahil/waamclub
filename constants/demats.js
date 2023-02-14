@@ -14,7 +14,7 @@ export default [
     demat: true,
   },
   {
-    title: 'Navuma',
+    title: 'Nuvama',
     image: require('../assets/demat/nuvama.jpg'),
     about: `Nuvama Wealth and Investment Limited (Formerly Edelweiss Broking Limited) is a technology driven securities company in India that offers a wide range of financial services including broking services, depository services, distribution of financial products, short term funding for employee stock option schemes and margin trading facility. We are one of the leading Stock broker and distributor in India. We offer our broking services through our proprietary state of the art Website, Mobile Application, Terminal and API based trading platforms. Our Company has over 0.3 million of active client base and ₹1.5 trillion of client assets spread across wide number of active broking accounts as of March 31, 2022.`,
     horizontal: true,

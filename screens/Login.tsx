@@ -92,7 +92,7 @@ const Login = ({navigation}) => {
             console.log('DATAA', data.user);
             console.log('DATAA', data.TotalReferral);
             setDematCount(data.TotalReferral);
-            actions.setDematReferralCount(dematCount);
+            actions.setDematReferralCount(data.TotalReferral);
             actions.setUserLoginDATA(data.user);
             actions.setUserID(data.user.agent_id);
             actions.setUserToken(res.headers.token);
@@ -225,7 +225,7 @@ const Login = ({navigation}) => {
           actions.setUserID(data.user.agent_id);
           actions.setUserToken(res.headers.token);
           setDematCount(data.TotalReferral);
-          actions.setDematReferralCount(dematCount);
+          actions.setDematReferralCount(data.TotalReferral);
           setData(email, password);
         } else {
           console.log('ERROR', error);

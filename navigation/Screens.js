@@ -44,6 +44,7 @@ import Product from '../screens/Product';
 import Help from '../screens/Help';
 import ForgetPassword from '../screens/ForgetPassword';
 import AffiliateCustomer from '../screens/AffiliateCustomer';
+import LockModal from '../components/LockModal';
 const {height, width} = Dimensions.get('screen');
 
 const Stack = createStackNavigator();
@@ -389,6 +390,13 @@ const HomeStack = ({navigation, route}) => {
       <Stack.Screen
         name="OfferPage"
         component={OfferPage}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="LockModal"
+        component={LockModal}
         options={{
           headerShown: false,
         }}

@@ -7,7 +7,7 @@ import {
   ImageBackground,
   Platform,
   TouchableOpacity,
-  StatusBar,
+  RefreshControl,
 } from 'react-native';
 import {Block, Text, theme} from 'galio-framework';
 import {Button, Modal} from 'native-base';
@@ -15,11 +15,16 @@ import {Icon} from '../components';
 import {Images, argonTheme, fontFamily} from '../constants';
 import {StoreContext} from '../redux/store/index';
 import Share from 'react-native-share';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {Api} from '../api/Api';
 const {width, height} = Dimensions.get('screen');
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
 const OfferPage = ({navigation, route}) => {
   const {data} = route.params;
   const productLink = 'https://www.waamclub.com/ragister/demat?referral_id=';
@@ -30,80 +35,66 @@ const OfferPage = ({navigation, route}) => {
   const [loader, setLoader] = useState(false);
   const amount = 8;
 
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => {
+      getData();
+      setRefreshing(false);
+    });
+  }, []);
+
   useEffect(() => {
     console.log('Count', state.dematReferralCount);
     console.log('object', agentID);
     getData();
-  }, [agentID]);
+  }, [agentID, state.dematReferralCount]);
 
   const getData = async () => {
     setLoader(true);
-    if (state.userLoginData) {
-      console.log('LOGIN DATA', state.userLoginData.is_enabled);
-      parseInt(state.userLoginData.is_enabled)
-        ? canShare(true)
-        : canShare(false);
-    } else {
-      try {
-        let savedEmail = await AsyncStorage.getItem('email');
-        let savedPassword = await AsyncStorage.getItem('password');
-        if (savedEmail != null && savedPassword != null) {
-          try {
-            // const data = ;
-            console.log('EMAIL: ', {
-              email: savedEmail,
-              password: savedPassword,
-            });
-            // const res = axios
-            //   .post(Api.LOGIN, {email: email, password: password},{})
-            //   .then(resp => {
-            //     console.log('RES', resp.data.data);
-            //   })
-            //   .catch(err => {
-            //     console.log('PASSWORDERROR: ', err.response.data);
-            //     setLoader(false);
-            //   });
-            // if (res) {
-            //   console.log('EMAIL: ', email);
-            //   console.log('PASSWORD: ', password);
-            // }
-            const res = await axios.post(
-              Api.LOGIN,
-              {email: savedEmail, password: savedPassword},
-              {},
-            );
-            const {data, error} = res.data;
-            console.log('Header', res.headers.token);
-            if (res) {
-              console.log('DATAA', data.user);
-              actions.setUserLoginDATA(data.user);
-              actions.setUserID(data.user.agent_id);
-              setAgentID(data.user.agent_id);
-              actions.setUserToken(res.headers.token);
-              data.user.is_enabled ? canShare(true) : canShare(false);
-            } else {
-              console.log('ERROR', error);
-            }
-            setLoader(false);
-          } catch (error) {
-            console.log('Errors', error);
-            setLoader(false);
+    try {
+      let savedEmail = await AsyncStorage.getItem('email');
+      let savedPassword = await AsyncStorage.getItem('password');
+      if (savedEmail != null && savedPassword != null) {
+        try {
+          // const data = ;
+          console.log('EMAIL: ', {email: savedEmail, password: savedPassword});
+          const res = await axios.post(
+            Api.LOGIN,
+            {email: savedEmail, password: savedPassword},
+            {},
+          );
+          const {data, error} = res.data;
+          console.log('Header', res.headers.token);
+          if (res) {
+            console.log('DATAA', data.user);
+            console.log('DATAA', data.TotalReferral);
+            setDematCount(data.TotalReferral);
+            actions.setDematReferralCount(data.TotalReferral);
+            actions.setUserLoginDATA(data.user);
+            actions.setUserID(data.user.agent_id);
+            actions.setUserToken(res.headers.token);
+          } else {
+            console.log('ERROR', error);
           }
-          console.log('STATE', state.userLoginDATA);
-          // navigation.navigate('BottomTabs');
-        } else {
-          console.log('Empty');
+        } catch (error) {
+          console.log('Errors', error);
           setLoader(false);
         }
-      } catch (error) {
+        console.log('STATE', state.userLoginDATA);
+      } else {
+        console.log('Empty');
         setLoader(false);
-        console.log('Error', error);
       }
+    } catch (error) {
+      setLoader(false);
+      console.log('Error', error);
     }
   };
   const onShare = link => {
     const shareOptions = {
-      message: `Join Waamclub with this Link and earn cashback  ${link}\n Referral id is: ${agentID}`,
+      message: `Join ${data.title} with this Link ${link}\n Referral id is: ${agentID}`,
       // url: Images.Facebook
     };
     try {
@@ -213,30 +204,38 @@ const OfferPage = ({navigation, route}) => {
       <ScrollView
         style={{flex: 1}}
         showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="always">
+        keyboardShouldPersistTaps="always"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[argonTheme.COLORS.PRIMARY]}
+          />
+        }>
         <ImageBackground
           source={Images.ProfileBackground}
           style={styles.profileContainer}>
-          <Block
-            row
-            style={{height: 20, alignItems: 'center', width: width * 0.7}}>
-            <Icon
-              name={'chevron-left'}
-              size={20}
-              onPress={() => navigation.goBack()}
-              color={argonTheme.COLORS.WHITE}
-              style={{marginRight: 15}}
-            />
-            <Text
-              style={{
-                fontWeight: 'bold',
-                color: argonTheme.COLORS.WHITE,
-                fontSize: 17,
-                fontFamily: fontFamily.MONTSERRATBOLD,
-              }}>
-              {data.demat ? data.title : 'Amazon'}
-            </Text>
-          </Block>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Block
+              row
+              style={{height: 20, alignItems: 'center', width: width * 0.7}}>
+              <Icon
+                name={'chevron-left'}
+                size={20}
+                color={argonTheme.COLORS.WHITE}
+                style={{marginRight: 15}}
+              />
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  color: argonTheme.COLORS.WHITE,
+                  fontSize: 17,
+                  fontFamily: fontFamily.MONTSERRATBOLD,
+                }}>
+                {data.demat ? data.title : 'Amazon'}
+              </Text>
+            </Block>
+          </TouchableOpacity>
           <Block width={width * 0.2} style={{marginTop: '-2%'}}>
             <Button
               rounded={'full'}
@@ -321,7 +320,8 @@ const OfferPage = ({navigation, route}) => {
                 Rewards
               </Text>
             </Block>
-            <Button paddingY={'1'}
+            <Button
+              paddingY={'1'}
               background={argonTheme.COLORS.WARNING}
               onPress={() => onShare(productLink + agentID)}>
               <Text color={argonTheme.COLORS.WHITE} bold>
@@ -337,7 +337,7 @@ const OfferPage = ({navigation, route}) => {
               marginHorizontal: '-10%',
             }}></Block> */}
           <Block
-            flex
+            // flex
             row
             style={{
               backgroundColor: argonTheme.COLORS.WHITE,
@@ -456,7 +456,8 @@ const OfferPage = ({navigation, route}) => {
                     Rewards in
                   </Text>
                   <Text color={argonTheme.COLORS.BLACK} bold size={15}>
-                    24 hours after{'\n'} Shipment
+                    24 hours after{'\n'}{' '}
+                    {data.demat ? `10 Referral \nCompletion` : 'Shipment'}
                   </Text>
                 </Block>
               </Block>
@@ -486,14 +487,15 @@ const styles = StyleSheet.create({
   },
   profileBackground: {
     width: width,
-    height: height,
+    // height: 'auto',
+    marginBottom: 10,
   },
   profileCard: {
     // position: 'relative',
     paddingHorizontal: theme.SIZES.BASE,
     paddingTop: theme.SIZES.BASE,
     // marginHorizontal: theme.SIZES.BASE,
-    paddingBottom: 10,
+    marginBottom: 10,
     backgroundColor: theme.COLORS.WHITE,
     elevation: 5,
   },

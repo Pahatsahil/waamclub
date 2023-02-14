@@ -23,6 +23,8 @@ const ProductCards = ({
   style,
   ctaColor,
   imageStyle,
+  locked,
+  count,
 }) => {
   const navigation = useNavigation();
   const imageStyles = [styles.horizontalImage, imageStyle];
@@ -34,98 +36,123 @@ const ProductCards = ({
   ];
 
   return (
-    <TouchableWithoutFeedback onPress={() => navigation.navigate(navi,{data: item})}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        locked
+          ? navigation.navigate('LockModal', {data: item, count: count})
+          : navigation.navigate(navi, {data: item});
+      }}>
       <Block card flex style={cardContainer}>
         <Block flex style={imgContainer}>
-          <Image source={{uri: item.image}} style={imageStyles} />
-          <Block
-            row
-            style={{
-              paddingBottom: 5,
-              borderColor: argonTheme.COLORS.BORDER_COLOR,
-              borderBottomWidth: 1,
-            }}>
-            <Text
-              size={13}
-              color={argonTheme.COLORS.BLACK}
-              style={{fontFamily: fontFamily.MONTSERRATREGULAR}}>
-              Brand:
-            </Text>
-            <Text
-              size={13}
-              color={argonTheme.COLORS.BLACK}
-              style={{
-                textTransform: 'uppercase',
-                fontFamily: fontFamily.MONTSERRATBOLD,
-              }}>
-              RealMe
-            </Text>
-          </Block>
+          {locked ? (
+            <Image
+              source={require('../assets/Lock.png')}
+              resizeMode="contain"
+              style={imageStyles}
+            />
+          ) : (
+            <>
+              <Image source={{uri: item.image}} style={imageStyles} />
+              <Block
+                row
+                style={{
+                  paddingBottom: 5,
+                  borderColor: argonTheme.COLORS.BORDER_COLOR,
+                  borderBottomWidth: 1,
+                }}>
+                <Text
+                  size={13}
+                  color={argonTheme.COLORS.BLACK}
+                  style={{fontFamily: fontFamily.MONTSERRATREGULAR}}>
+                  Brand:
+                </Text>
+                <Text
+                  size={13}
+                  color={argonTheme.COLORS.BLACK}
+                  style={{
+                    textTransform: 'uppercase',
+                    fontFamily: fontFamily.MONTSERRATBOLD,
+                  }}>
+                  RealMe
+                </Text>
+              </Block>
+            </>
+          )}
         </Block>
-        <Block flex space="between" style={styles.cardDescription}>
+        {locked ? (
           <Text
-            size={13}
             color={argonTheme.COLORS.BLACK}
-            style={{textTransform: 'uppercase', lineHeight: 20}}>
-            RealMe 10 Pro +
+            bold
+            style={{textAlign: 'center', marginVertical: 10}}
+            size={16}>
+            {10 - count} Referral left
           </Text>
-          <Block
-            row
-            center
-            space="evenly"
-            style={{
-              paddingVertical: 5,
-            }}>
-            <Text
-              size={11}
-              color={argonTheme.COLORS.BLACK}
-              style={{
-                fontFamily: fontFamily.WHITNEYMEDIUM,
-                marginRight: 2,
-                textDecorationLine: 'line-through',
-              }}>
-              Rs 19,999
-            </Text>
+        ) : (
+          <Block flex space="between" style={styles.cardDescription}>
             <Text
               size={13}
               color={argonTheme.COLORS.BLACK}
-              style={{
-                textTransform: 'uppercase',
-                fontFamily: fontFamily.WHITNEYBOLD,
-                marginRight: 3,
-              }}>
-              Rs 14,999
+              style={{textTransform: 'uppercase', lineHeight: 20}}>
+              RealMe 10 Pro +
             </Text>
-            <Text
-              size={11}
-              color={argonTheme.COLORS.WARNING}
+            <Block
+              row
+              center
+              space="evenly"
               style={{
-                fontFamily: fontFamily.WHITNEYREGULAR,
+                paddingVertical: 5,
               }}>
-              (5000 Off)
-            </Text>
-          </Block>
-          <Block
-            style={{
-              padding: 10,
-              backgroundColor: argonTheme.COLORS.BUTTON_PINK,
-            }}>
+              <Text
+                size={11}
+                color={argonTheme.COLORS.BLACK}
+                style={{
+                  fontFamily: fontFamily.WHITNEYMEDIUM,
+                  marginRight: 2,
+                  textDecorationLine: 'line-through',
+                }}>
+                Rs 19,999
+              </Text>
+              <Text
+                size={13}
+                color={argonTheme.COLORS.BLACK}
+                style={{
+                  textTransform: 'uppercase',
+                  fontFamily: fontFamily.WHITNEYBOLD,
+                  marginRight: 3,
+                }}>
+                Rs 14,999
+              </Text>
+              <Text
+                size={11}
+                color={argonTheme.COLORS.WARNING}
+                style={{
+                  fontFamily: fontFamily.WHITNEYREGULAR,
+                }}>
+                (5000 Off)
+              </Text>
+            </Block>
+            <Block
+              style={{
+                padding: 10,
+                backgroundColor: argonTheme.COLORS.BUTTON_PINK,
+              }}>
+              <Text
+                size={13}
+                muted={!ctaColor}
+                color={argonTheme.COLORS.SECONDARY}
+                style={{textTransform: 'uppercase'}}>
+                Best Deal in this Price
+              </Text>
+            </Block>
             <Text
               size={13}
               muted={!ctaColor}
-              color={argonTheme.COLORS.SECONDARY}
-              style={{textTransform: 'uppercase'}}>
-              Best Deal in this Price
+              color={argonTheme.COLORS.WARNING}
+              style={{textTransform: 'uppercase', lineHeight: 20}}>
+              FInal Price Rs: 14,999
             </Text>
           </Block>
-          <Text
-            size={13}
-            muted={!ctaColor}
-            color={argonTheme.COLORS.WARNING}
-            style={{textTransform: 'uppercase', lineHeight: 20}}>
-            FInal Price Rs: 14,999
-          </Text>
-        </Block>
+        )}
       </Block>
     </TouchableWithoutFeedback>
   );

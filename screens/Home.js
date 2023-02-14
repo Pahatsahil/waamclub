@@ -1,14 +1,17 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   StyleSheet,
   Dimensions,
   ScrollView,
   Image,
-  // Text,
+  RefreshControl,
   View,
 } from 'react-native';
 import {Block, theme, Text} from 'galio-framework';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {Api} from '../api/Api';
 import {Card, SmallCard, ProductCards, BigCards} from '../components';
 import articles from '../constants/articles';
 import {argonTheme, blocks, fontFamily} from '../constants';
@@ -16,32 +19,108 @@ import {SliderBox} from 'react-native-image-slider-box';
 import Theme from '../constants/Theme';
 import { useNavigation } from '@react-navigation/native';
 import demats from '../constants/demats';
+import { StoreContext } from '../redux/store';
 const {width, height} = Dimensions.get('window');
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
 const Home = () => {
   const navigation = useNavigation()
+  const {state, actions} = useContext(StoreContext);
+  const [locked, setLocked] = useState(true);
+  const [agentID, setAgentID] = useState(state.userID || []);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [loader, setLoader] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => {
+      getData();
+      setRefreshing(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    state.dematReferralCount >= 10 ? setLocked(false) : setLocked(true)
+    console.log('Count', state.dematReferralCount);
+    console.log('object', agentID);
+    getData();
+  }, [agentID, state.dematReferralCount]);
+
+  const getData = async () => {
+    setLoader(true);
+    try {
+      let savedEmail = await AsyncStorage.getItem('email');
+      let savedPassword = await AsyncStorage.getItem('password');
+      if (savedEmail != null && savedPassword != null) {
+        try {
+          // const data = ;
+          console.log('EMAIL: ', {email: savedEmail, password: savedPassword});
+          const res = await axios.post(
+            Api.LOGIN,
+            {email: savedEmail, password: savedPassword},
+            {},
+          );
+          const {data, error} = res.data;
+          console.log('Header', res.headers.token);
+          if (res) {
+            console.log('DATAA', data.user);
+            console.log('DATAA', data.TotalReferral);
+            setDematCount(data.TotalReferral);
+            actions.setDematReferralCount(data.TotalReferral);
+            actions.setUserLoginDATA(data.user);
+            actions.setUserID(data.user.agent_id);
+            actions.setUserToken(res.headers.token);
+          } else {
+            console.log('ERROR', error);
+          }
+        } catch (error) {
+          console.log('Errors', error);
+          setLoader(false);
+        }
+        console.log('STATE', state.userLoginDATA);
+      } else {
+        console.log('Empty');
+        setLoader(false);
+      }
+    } catch (error) {
+      setLoader(false);
+      console.log('Error', error);
+    }
+  };
+
   const images = [
-    'https://images.unsplash.com/photo-1516559828984-fb3b99548b21?ixlib=rb-1.2.1&auto=format&fit=crop&w=2100&q=80',
-    'https://images.unsplash.com/photo-1519368358672-25b03afee3bf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2004&q=80',
-    'https://images.unsplash.com/photo-1500522144261-ea64433bbe27?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2102&q=80',
-    'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1326&q=80',
-    'https://images.unsplash.com/photo-1482686115713-0fbcaced6e28?fit=crop&w=1947&q=80',
-    'https://images.unsplash.com/photo-1516559828984-fb3b99548b21?ixlib=rb-1.2.1&auto=format&fit=crop&w=2100&q=80',
-    'https://images.unsplash.com/photo-1500522144261-ea64433bbe27?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2102&q=80',
-    'https://images.unsplash.com/photo-1482686115713-0fbcaced6e28?fit=crop&w=1947&q=80',
-    'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1326&q=80',
-  ];
+    require('../assets/demat/angel.jpg'),
+    require('../assets/demat/motilal.jpg'),
+    require('../assets/demat/nuvama.jpg'),
+  ]
   const renderArticles = () => {
     return (
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.articles}>
+        contentContainerStyle={styles.articles}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[argonTheme.COLORS.PRIMARY]}
+          />
+        }>
         <Block flex card style={styles.slider}>
           <SliderBox
             images={images}
-            onCurrentImagePressed={index =>
-              navigation.navigate('OfferPage')
+            onCurrentImagePressed={index =>{
+              index == 0 ?
+              navigation.navigate('OfferPage', {data: demats[0]})
+              : index == 1 ?
+              navigation.navigate('OfferPage', {data: demats[1]})
+              : index == 2 ?
+              navigation.navigate('OfferPage', {data: demats[2]})
+              : null
             }
+            }
+            resizeMode={'contain'}
             // currentImageEmitter={index =>
             //   console.log(`current pos is: ${index}`)
             // }
@@ -53,7 +132,7 @@ const Home = () => {
             parentWidth={width * 0.855}
           />
         </Block>
-        <Block flex>
+        {/* <Block flex>
           <Text
             size={15}
             style={{
@@ -116,9 +195,9 @@ const Home = () => {
               style={{marginRight: theme.SIZES.BASE}}
             />
           </ScrollView>
-        </Block>
+        </Block> */}
         <Block flex>
-        <Text size={15} style={styles.heading}>
+        <Text size={15} style={[styles.heading, {marginTop: 10,}]}>
             Demat Offers
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -156,21 +235,29 @@ const Home = () => {
                 navi={'LimitedTimeDeals'}
                 item={articles[1]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
               <BigCards
                 navi={'LimitedTimeDeals'}
                 item={articles[2]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
               <BigCards
                 navi={'LimitedTimeDeals'}
                 item={articles[3]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
               <BigCards
                 navi={'LimitedTimeDeals'}
                 item={articles[4]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
             </Block>
           </ScrollView>
@@ -183,21 +270,29 @@ const Home = () => {
                 navi={'OfferPage'}
                 item={articles[1]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
               <Card
                 navi={'OfferPage'}
                 item={articles[2]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
               <Card
                 navi={'OfferPage'}
                 item={articles[3]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
               <Card
                 navi={'OfferPage'}
                 item={articles[4]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
             </Block>
           </ScrollView>
@@ -210,21 +305,29 @@ const Home = () => {
                 navi={'Product'}
                 item={articles[1]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
               <ProductCards
                 navi={'Product'}
                 item={articles[2]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
               <ProductCards
                 navi={'Product'}
                 item={articles[3]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
               <ProductCards
                 navi={'Product'}
                 item={articles[4]}
                 style={{marginRight: theme.SIZES.BASE}}
+                locked={locked}
+                count={state.dematReferralCount}
               />
             </Block>
           </ScrollView>
