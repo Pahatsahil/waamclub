@@ -1,5 +1,3 @@
-// const BASE_URL = 'http://10.0.2.2:8000/'; //Local Server
-// const BASE_URL = 'http://aviraspices.in/'; //Previous Server
 const BASE_URL = 'https://www.waamclub.com/';
 const API = 'api/';
 

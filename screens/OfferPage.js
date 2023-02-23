@@ -414,9 +414,17 @@ const OfferPage = ({navigation, route}) => {
                   color={argonTheme.COLORS.WARNING}
                   style={{marginRight: 5}}
                 />
-                <Text color={argonTheme.COLORS.BLACK} bold size={15}>
-                  Complete {10 - state.dematReferralCount} Referral{'\n'} Today
-                </Text>
+                {state.dematReferralCount <= 10 ? (
+                  <Text color={argonTheme.COLORS.BLACK} bold size={15}>
+                    Complete {10 - state.dematReferralCount} Referral{'\n'}{' '}
+                    Today
+                  </Text>
+                ) : (
+                  <Text color={argonTheme.COLORS.BLACK} bold size={15}>
+                    Completed {state.dematReferralCount} Referrals{'\n'} till
+                    now
+                  </Text>
+                )}
               </Block>
               <Block>
                 <Text

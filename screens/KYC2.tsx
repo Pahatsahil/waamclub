@@ -86,7 +86,7 @@ const KYC2 = ({route}) => {
     setLoader(false)
   }
   catch(error){
-    console.log('error', error)
+    console.log('error', error.response.data)
     setLoader(false)
   }
   };
