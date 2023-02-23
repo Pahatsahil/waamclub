@@ -229,16 +229,13 @@ const Login = ({navigation}) => {
           setData(email, password);
         } else {
           console.log('ERROR', error);
-          Alert.alert('Error', email+password)
         }
       } else {
         setLoader(false);
-        Alert.alert('Error', email+password)
       }
     } catch (error) {
       console.log('Errors', error);
       setLoader(false);
-      Alert.alert('Error', email+password)
     }
     setLoader(false);
   };
